@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Estudiantes</title>
+</head>
+<body>
+    <h1>Lista de Estudiantes</h1>
+    <ul>
+        {% for estudiante in estudiantes %}
+            <li>
+                <a href="{% url 'detalle_estudiante' estudiante.pk %}">
+                    {{ estudiante.nombre }} {{ estudiante.apellido }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
