@@ -1,3 +1,3 @@
 # PythonProyecto1
 
-# Alumna: Sandoval Constanza
+# Alumnos: Lasala Lucero, Sandoval Constanza, Sosa Leonel
