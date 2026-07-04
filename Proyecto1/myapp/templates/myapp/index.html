@@ -6,6 +6,113 @@ Inicio
 
 {% block content %}
 
-<h1>Bienvenido</h1>
+<div class="hero">
+
+    <div class="hero-text">
+
+        <span class="badge-custom">
+            Universidad · Sistema Académico
+        </span>
+
+        <h1>
+            Gestiona tu institución de manera eficiente
+        </h1>
+
+        <p>
+            Administra cursos, profesores, estudiantes y entregables desde un único lugar,
+            con una interfaz moderna, intuitiva y profesional.
+        </p>
+
+        <a href="{% url 'myapp:cursos' %}" class="btn btn-gold">
+            <i class="bi bi-arrow-right-circle"></i>
+            Explorar Cursos
+        </a>
+
+    </div>
+
+    <div class="hero-icon">
+
+        <i class="bi bi-mortarboard-fill"></i>
+
+    </div>
+
+</div>
+
+
+<div class="row mt-5 g-4">
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="dashboard-card">
+
+            <i class="bi bi-book card-icon"></i>
+
+            <h3>Cursos</h3>
+
+            <p>Visualiza y administra los cursos disponibles.</p>
+
+            <a href="{% url 'myapp:cursos' %}" class="btn btn-outline-custom">
+                Ingresar
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="dashboard-card">
+
+            <i class="bi bi-person-workspace card-icon"></i>
+
+            <h3>Profesores</h3>
+
+            <p>Consulta y registra profesores.</p>
+
+            <a href="{% url 'myapp:profesores' %}" class="btn btn-outline-custom">
+                Ingresar
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="dashboard-card">
+
+            <i class="bi bi-mortarboard card-icon"></i>
+
+            <h3>Estudiantes</h3>
+
+            <p>Gestiona la información de los alumnos.</p>
+
+            <a href="{% url 'myapp:estudiantes' %}" class="btn btn-outline-custom">
+                Ingresar
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+
+        <div class="dashboard-card">
+
+            <i class="bi bi-folder2-open card-icon"></i>
+
+            <h3>Entregables</h3>
+
+            <p>Controla las entregas y actividades.</p>
+
+            <a href="{% url 'myapp:entregables' %}" class="btn btn-outline-custom">
+                Ingresar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}
