@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Curso agregado
+{% endblock %}
+
+{% block content %}
+
+<h2>✅ Curso agregado con éxito</h2>
+
+<a href="{% url 'myapp:cursos' %}">
+    Volver a Cursos
+</a>
+
+{% endblock %}
