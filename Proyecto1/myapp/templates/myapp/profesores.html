@@ -1,11 +1,34 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Inicio
+Profesores
 {% endblock %}
 
 {% block content %}
 
-<h1>Bienvenido</h1>
+<h1>Lista de Profesores</h1>
+
+<a href="{% url 'myapp:profesorFormulario' %}">
+    Agregar Profesor
+</a>
+
+<hr>
+
+{% for profesor in profesores %}
+
+    <p>
+        <strong>{{ profesor.nombre }} {{ profesor.apellido }}</strong><br>
+        Email: {{ profesor.email }}<br>
+        Profesión: {{ profesor.profesion }}<br>
+        Materia: {{ profesor.materiaAsignada }}
+    </p>
+
+    <hr>
+
+{% empty %}
+
+    <p>No hay profesores cargados.</p>
+
+{% endfor %}
 
 {% endblock %}

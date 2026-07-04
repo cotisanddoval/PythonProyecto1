@@ -1,11 +1,29 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Inicio
+Cursos
 {% endblock %}
 
 {% block content %}
 
-<h1>Bienvenido</h1>
+<h1>Lista de Cursos</h1>
+
+<a href="{% url 'myapp:cursoFormulario' %}">
+    Agregar Curso
+</a>
+
+<hr>
+
+{% for curso in cursos %}
+
+    <p>
+        <strong>{{ curso.nombre }}</strong> - Camada {{ curso.camada }}
+    </p>
+
+{% empty %}
+
+    <p>No hay cursos cargados.</p>
+
+{% endfor %}
 
 {% endblock %}
