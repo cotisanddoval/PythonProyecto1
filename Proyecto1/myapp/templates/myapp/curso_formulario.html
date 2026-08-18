@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Agregar Curso
+{% endblock %}
+
+{% block content %}
+
+<h1>Agregar Curso</h1>
+
+<form action="{% url 'myapp:cursoFormulario' %}" method="post">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Enviar</button>
+
+</form>
+
+{% endblock %}
