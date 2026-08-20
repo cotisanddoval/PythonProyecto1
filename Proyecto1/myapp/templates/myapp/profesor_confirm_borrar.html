@@ -2,11 +2,12 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Formulario de Profesor</h2>
+    <h2>Eliminar Profesor</h2>
+    <p>¿Estás seguro de que deseas eliminar al profesor <strong>{{ profesor.nombre }} {{ profesor.apellido }}</strong>?</p>
+
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
         <a href="{% url 'myapp:profesores' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>

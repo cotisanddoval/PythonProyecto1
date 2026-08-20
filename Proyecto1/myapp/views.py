@@ -86,6 +86,37 @@ def profesorFormulario(request):
         form = ProfesorFormulario()
     return render(request, "myapp/profesor_formulario.html", {"form": form})
 
+# Editar
+def editar_profesor(request, pk):
+    profesor = get_object_or_404(Profesor, pk=pk)
+    if request.method == 'POST':
+        form = ProfesorFormulario(request.POST)
+        if form.is_valid():
+            profesor.nombre = form.cleaned_data["nombre"]
+            profesor.apellido = form.cleaned_data["apellido"]
+            profesor.email = form.cleaned_data["email"]
+            profesor.profesion = form.cleaned_data["profesion"]
+            profesor.materiaAsignada = form.cleaned_data["materiaAsignada"]
+            profesor.save()
+            return redirect('myapp:profesores')
+    else:
+        # Pre-poblamos el formulario con los datos existentes
+        form = ProfesorFormulario(initial={
+            'nombre': profesor.nombre,
+            'apellido': profesor.apellido,
+            'email': profesor.email,
+            'profesion': profesor.profesion,
+            'materiaAsignada': profesor.materiaAsignada,
+        })
+    return render(request, 'myapp/profesor_formulario.html', {'form': form})
+
+# Eliminar
+def eliminar_profesor(request, pk):
+    profesor = get_object_or_404(Profesor, pk=pk)
+    if request.method == 'POST':
+        profesor.delete()
+        return redirect('myapp:profesores')
+    return render(request, 'myapp/profesor_confirm_delete.html', {'profesor': profesor})
 
 # --- ENTREGABLES ---
 

@@ -19,8 +19,10 @@ urlpatterns = [
 
     # Profesores
     path('profesores/', views.profesores, name='profesores'),
-    path('profesor/nuevo/', views.profesorFormulario, name='profesorFormulario'),
-
+    path('profesores/crear/', views.profesorFormulario, name='profesorFormulario'),
+    path('profesores/editar/<int:pk>/', views.editar_profesor, name='editar_profesor'),
+    path('profesores/eliminar/<int:pk>/', views.eliminar_profesor, name='eliminar_profesor'),
+    
     # Entregables
     path('entregables/', views.entregables, name='entregables'),
 ]
