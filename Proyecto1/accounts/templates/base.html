@@ -1,0 +1,24 @@
+{% if user.is_authenticated %}
+    <li class="nav-item d-flex align-items-center me-2">
+        {% if user.perfil.avatar %}
+            <img src="{{ user.perfil.avatar.url }}" alt="Avatar" class="rounded-circle me-1" style="width: 32px; height: 32px; object-fit: cover;">
+        {% else %}
+            <i class="bi bi-person-circle text-white fs-5 me-1"></i>
+        {% endif %}
+        <span class="text-white small fw-bold me-2">{{ user.username }}</span>
+    </li>
+    <li class="nav-item">
+        <a href="{% url 'accounts:perfil' %}" class="nav-link text-white"><span class="ms-1">Perfil</span></a>
+    </li>
+    <li class="nav-item">
+        <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-link nav-link text-white d-flex align-items-center border-0 text-decoration-none">
+                <span class="ms-1">Cerrar sesión</span>
+            </button>
+        </form>
+    </li>
+{% else %}
+    <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link text-white"><span class="ms-1">Ingresar</span></a></li>
+    <li class="nav-item"><a href="{% url 'accounts:registro' %}" class="nav-link text-white"><span class="ms-1">Registrarse</span></a></li>
+{% endif %}
