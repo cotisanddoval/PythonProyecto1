@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="container mt-5 col-md-4">
+    <h3 class="text-center mb-3">Iniciar sesión</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary w-100">Entrar</button>
+    </form>
+    <p class="mt-3 text-center">
+        ¿No tienes cuenta? <a href="{% url 'accounts:registro' %}">Registrate</a>
+    </p>
+</div>
+{% endblock %}
