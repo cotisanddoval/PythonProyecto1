@@ -328,3 +328,9 @@ font-size:7rem;
 }
 
 }
+
+.site-footer {
+    background-color: #5a1428 !important;
+    color: #f5e6c8;
+    border-top: 3px solid #d4a72c;
+}
