@@ -50,9 +50,8 @@ Detalle de {{ estudiante.nombre }} - Sistema Académico
                     <h5 class="fw-bold" style="color: #631925;"><i class="bi bi-book me-2"></i>Cursos Inscritos</h5>
                 </div>
                 <div class="card-body p-4">
-                    <!-- Asumimos que un estudiante tiene una relación ManyToMany con Curso -->
                     <div class="d-flex flex-wrap gap-2">
-                        {% for curso in estudiante.cursos.all %}
+                        {% for curso in cursos %}
                             <span class="badge rounded-pill border px-3 py-2 text-dark" style="background-color: #f8f9fa; font-size: 0.85rem;">
                                 {{ curso.nombre }} (Camada #{{ curso.camada }})
                             </span>
@@ -79,36 +78,30 @@ Detalle de {{ estudiante.nombre }} - Sistema Académico
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Asumimos que pasas 'entregables' desde la vista o usas estudiante.entregable_set.all -->
-                            {% for entregable in estudiante.entregables.all %}
+                            {% for entrega in entregas %}
                             <tr>
                                 <td class="px-4 py-3 border-light">
-                                    <span class="fw-semibold text-dark d-block">{{ entregable.titulo }}</span>
-                                    <span class="text-muted small">{{ entregable.curso.nombre }}</span>
+                                    <span class="fw-semibold text-dark d-block">{{ entrega.trabajo_practico.titulo }}</span>
+                                    <span class="text-muted small">{{ entrega.trabajo_practico.curso.nombre }}</span>
                                 </td>
                                 
                                 <td class="px-4 py-3 text-center border-light">
-                                    <!-- Lógica visual de estados -->
-                                    {% if entregable.estado == 'evaluado' %}
+                                    {% if entrega.entregado %}
                                         <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-1 border border-success border-opacity-25">
-                                            Evaluado
-                                        </span>
-                                    {% elif entregable.estado == 'sin_nota' %}
-                                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-1 border border-warning border-opacity-25">
-                                            Entregado (Sin nota)
+                                            Entregado
                                         </span>
                                     {% else %}
-                                        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-1 border border-danger border-opacity-25">
-                                            No entregado
+                                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-1 border border-warning border-opacity-25">
+                                            Pendiente
                                         </span>
                                     {% endif %}
                                 </td>
                                 
                                 <td class="px-4 py-3 text-center border-light">
-                                    {% if entregable.nota %}
-                                        <span class="fw-bold" style="color: #4a121a; font-size: 1.1rem;">{{ entregable.nota }}</span>
+                                    {% if entrega.nota is not None %}
+                                        <span class="fw-bold" style="color: #4a121a; font-size: 1.1rem;">{{ entrega.nota }} pts</span>
                                     {% else %}
-                                        <span class="text-muted small">-</span>
+                                        <span class="text-muted small">Sin calificar</span>
                                     {% endif %}
                                 </td>
                             </tr>

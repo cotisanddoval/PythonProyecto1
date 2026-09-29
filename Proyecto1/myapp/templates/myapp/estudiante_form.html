@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-5">
+    <div class="col-12 col-md-8 col-lg-6">
         
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
             
@@ -19,13 +19,12 @@
                     {% if form.instance.pk %}Editar Estudiante{% else %}Agregar Estudiante{% endif %}
                 </h3>
                 <p class="small mb-0" style="color: rgba(255, 255, 255, 0.8) !important;">
-                    {% if form.instance.pk %}Modifica los datos del alumno seleccionado{% else %}Ingresa los datos del nuevo matriculado{% endif %}
+                    {% if form.instance.pk %}Modifica los datos del alumno seleccionado{% else %}Ingresa los datos y credenciales del nuevo matriculado{% endif %}
                 </p>
             </div>
 
             <!-- Cuerpo -->
             <div class="card-body bg-white p-4 p-md-5">
-                <!-- Nota: Según tu views.py, la vista de creación se llama crear_estudiante -->
                 <form action="{% if form.instance.pk %}{% url 'myapp:editar_estudiante' form.instance.pk %}{% else %}{% url 'myapp:crear_estudiante' %}{% endif %}" method="post" novalidate>
                     {% csrf_token %}
 
@@ -35,15 +34,14 @@
                         </div>
                     {% endif %}
 
+                    <!-- Nombre y Apellido -->
                     <div class="row g-3 mb-3">
-                        <!-- Nombre -->
                         <div class="col-md-6">
                             <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">Nombre</label>
                             <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" value="{{ form.nombre.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
                             {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
                         </div>
                         
-                        <!-- Apellido -->
                         <div class="col-md-6">
                             <label for="{{ form.apellido.id_for_label }}" class="form-label fw-semibold small text-secondary">Apellido</label>
                             <input type="text" name="{{ form.apellido.name }}" id="{{ form.apellido.id_for_label }}" value="{{ form.apellido.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
@@ -51,11 +49,26 @@
                         </div>
                     </div>
 
-                    <!-- Email -->
-                    <div class="mb-4">
+                    <!-- Correo Electrónico -->
+                    <div class="mb-3">
                         <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold small text-secondary">Correo Electrónico</label>
                         <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" placeholder="ejemplo@correo.com" required>
                         {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Usuario y Contraseña (Credenciales de acceso) -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold small text-secondary">Nombre de Usuario</label>
+                            <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
+                            {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold small text-secondary">Contraseña inicial</label>
+                            <input type="password" name="{{ form.password.name }}" id="{{ form.password.id_for_label }}" class="form-control rounded-3 fs-6 custom-input" required>
+                            {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}
+                        </div>
                     </div>
 
                     <!-- Botones -->

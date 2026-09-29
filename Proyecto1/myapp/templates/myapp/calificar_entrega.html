@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Calificar Entrega - Sistema Académico
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: rgba(99, 25, 37, 0.1);">
+                        <i class="bi bi-award fs-2" style="color: #631925;"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1" style="color: #631925;">Calificar Trabajo Práctico</h3>
+                    <p class="text-muted small mb-0">{{ entrega.trabajo_practico.titulo }}</p>
+                </div>
+
+                <div class="p-3 mb-4 rounded-3 bg-light">
+                    <p class="small mb-1"><strong>Estudiante:</strong> {{ entrega.estudiante.nombre }} {{ entrega.estudiante.apellido }}</p>
+                    <p class="small mb-0"><strong>Fecha de subida:</strong> {{ entrega.fecha_subida|date:"d/m/Y H:i" }}</p>
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="nota" class="form-label fw-semibold small text-secondary">Calificación / Nota</label>
+                        <input type="text" name="nota" id="nota" class="form-control rounded-3" value="{{ entrega.nota|default:'' }}" placeholder="Ej: 9 o Aprobado" required>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn text-white rounded-pill fw-semibold shadow-sm py-2" style="background-color: #631925; border: none;">
+                            Guardar Calificación
+                        </button>
+                        <a href="{% url 'myapp:detalle_trabajo_practico' entrega.trabajo_practico.pk %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">
+                            Cancelar y volver
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

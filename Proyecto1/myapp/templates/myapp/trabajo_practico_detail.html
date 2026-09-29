@@ -40,6 +40,7 @@
                     <th>Archivo</th>
                     <th>Estado</th>
                     <th>Nota</th>
+                    <th class="text-center">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,10 +71,15 @@
                             <span class="text-muted small">Sin calificar</span>
                         {% endif %}
                     </td>
+                    <td class="text-center">
+                        <a href="{% url 'myapp:calificar_entrega' entrega.pk %}" class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-sm">
+                            <i class="bi bi-pencil-square me-1"></i> {% if entrega.nota %}Modificar Nota{% else %}Calificar{% endif %}
+                        </a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-muted">
+                    <td colspan="6" class="text-center py-4 text-muted">
                         Ningún alumno ha realizado una entrega todavía.
                     </td>
                 </tr>

@@ -19,7 +19,7 @@ Formulario de Docente - Sistema Académico
                     {% if form.instance.pk %}Editar Docente{% else %}Registrar Docente{% endif %}
                 </h3>
                 <p class="small mb-0" style="color: rgba(255, 255, 255, 0.8) !important;">
-                    Completa los datos personales y el curso a cargo
+                    Completa los datos personales, credenciales y el curso a cargo
                 </p>
             </div>
             
@@ -81,7 +81,7 @@ Formulario de Docente - Sistema Académico
                     </div>
 
                     <!-- Curso asignado (Desplegable dinámico de cursos) -->
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label for="{{ form.curso_asignado.id_for_label }}" class="form-label fw-semibold small text-secondary">
                             Asignar Curso
                         </label>
@@ -89,6 +89,29 @@ Formulario de Docente - Sistema Académico
                         {% if form.curso_asignado.errors %}
                             <div class="text-danger small mt-1">{{ form.curso_asignado.errors.0 }}</div>
                         {% endif %}
+                    </div>
+
+                    <!-- Usuario y Contraseña (Credenciales de acceso) -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Nombre de Usuario
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Contraseña inicial
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                            {% endif %}
+                        </div>
                     </div>
 
                     <!-- Acciones -->

@@ -23,10 +23,18 @@ Inicio
             con una interfaz moderna, intuitiva y profesional.
         </p>
 
-        <a href="{% url 'myapp:cursos' %}" class="btn btn-gold">
-            <i class="bi bi-arrow-right-circle"></i>
-            Explorar Cursos
-        </a>
+        <!-- Botón inteligente que cambia según el estado de sesión -->
+        {% if user.is_authenticated %}
+            <a href="{% url 'myapp:cursos' %}" class="btn btn-gold">
+                <i class="bi bi-arrow-right-circle"></i>
+                Explorar Cursos
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:registro' %}" class="btn btn-gold">
+                <i class="bi bi-person-plus"></i>
+                Regístrate ahora
+            </a>
+        {% endif %}
 
     </div>
 
@@ -39,78 +47,78 @@ Inicio
 </div>
 
 
-<div class="row mt-5 g-4">
+<div class="row mt-5 g-4 justify-content-center">
 
+    <!-- 1. CURSOS -->
     <div class="col-md-6 col-lg-3">
-
         <div class="dashboard-card">
-
             <i class="bi bi-book card-icon"></i>
-
             <h3>Cursos</h3>
-
             <p>Visualiza y administra los cursos disponibles.</p>
-
-            <a href="{% url 'myapp:cursos' %}" class="btn btn-outline-custom">
-                Ingresar
-            </a>
-
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'myapp:cursos' %}" class="btn btn-outline-custom">Ingresar</a>
+            {% else %}
+                <span class="text-muted small fw-semibold d-block mt-3">Módulo institucional</span>
+            {% endif %}
         </div>
-
     </div>
 
+    <!-- 2. PROFESORES -->
     <div class="col-md-6 col-lg-3">
-
         <div class="dashboard-card">
-
             <i class="bi bi-person-workspace card-icon"></i>
-
             <h3>Profesores</h3>
-
             <p>Consulta y registra profesores.</p>
-
-            <a href="{% url 'myapp:profesores' %}" class="btn btn-outline-custom">
-                Ingresar
-            </a>
-
+            
+            {% if user.is_authenticated %}
+                {% if user.perfil.rol == 'admin' %}
+                    <a href="{% url 'myapp:profesores' %}" class="btn btn-outline-custom">Ingresar</a>
+                {% else %}
+                    <span class="text-muted small fw-semibold d-block mt-3">Acceso restringido (Admin)</span>
+                {% endif %}
+            {% else %}
+                <span class="text-muted small fw-semibold d-block mt-3">Plantel docente</span>
+            {% endif %}
         </div>
-
     </div>
 
+    <!-- 3. ESTUDIANTES -->
     <div class="col-md-6 col-lg-3">
-
         <div class="dashboard-card">
-
             <i class="bi bi-mortarboard card-icon"></i>
-
             <h3>Estudiantes</h3>
-
             <p>Gestiona la información de los alumnos.</p>
-
-            <a href="{% url 'myapp:estudiantes' %}" class="btn btn-outline-custom">
-                Ingresar
-            </a>
-
+            
+            {% if user.is_authenticated %}
+                {% if user.perfil.rol == 'admin' or user.perfil.rol == 'profesor' %}
+                    <a href="{% url 'myapp:estudiantes' %}" class="btn btn-outline-custom">Ingresar</a>
+                {% else %}
+                    <span class="text-muted small fw-semibold d-block mt-3">Panel personal activo</span>
+                {% endif %}
+            {% else %}
+                <span class="text-muted small fw-semibold d-block mt-3">Gestión de alumnos</span>
+            {% endif %}
         </div>
-
     </div>
 
+    <!-- 4. TRABAJOS PRÁCTICOS -->
     <div class="col-md-6 col-lg-3">
-
         <div class="dashboard-card">
-
             <i class="bi bi-folder2-open card-icon"></i>
-
             <h3>Trabajos Prácticos</h3>
-
             <p>Controla los TPs y actividades.</p>
 
-            <a href="{% url 'myapp:trabajos_practicos' %}" class="btn btn-outline-custom">
-                Ingresar
-            </a>
-
+            {% if user.is_authenticated %}
+                {% if user.perfil.rol == 'alumno' %}
+                    <a href="{% url 'myapp:panel_alumno' %}" class="btn btn-outline-custom">Mis Trabajos</a>
+                {% else %}
+                    <a href="{% url 'myapp:trabajos_practicos' %}" class="btn btn-outline-custom">Ingresar</a>
+                {% endif %}
+            {% else %}
+                <span class="text-muted small fw-semibold d-block mt-3">Área de entregables</span>
+            {% endif %}
         </div>
-
     </div>
 
 </div>

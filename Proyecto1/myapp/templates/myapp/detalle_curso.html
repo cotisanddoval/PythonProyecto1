@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ curso.nombre }} - Sistema Académico
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'myapp:cursos' %}">Cursos</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ curso.nombre }}</li>
+                </ol>
+            </nav>
+            <div class="p-4 rounded-4 text-white shadow-sm" style="background-color: #631925;">
+                <h1 class="fw-bold" style="color: #dfd790 !important;">{{ curso.nombre }}</h1>
+                <p class="mb-0">Camada: {{ curso.camada }} | Inicio: {{ curso.fecha_inicio|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-3" style="color: #631925;">Trabajos Prácticos del Curso</h3>
+    
+    <div class="row g-4">
+        {% for tp in trabajos %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                    <h5 class="fw-bold text-dark">{{ tp.titulo }}</h5>
+                    <p class="text-muted small">{{ tp.descripcion }}</p>
+                    <p class="small fw-semibold text-secondary">Fecha límite: {{ tp.fecha_entrega|date:"d/m/Y" }}</p>
+                    
+                    {% if user.perfil.rol == 'alumno' %}
+                        <a href="{% url 'myapp:subir_entrega' tp.id %}" class="btn btn-sm text-white rounded-pill" style="background-color: #631925;">
+                            <i class="bi bi-upload"></i> Subir / Ver Mi Trabajo
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-light text-center py-4 text-muted rounded-4 shadow-sm">
+                    No hay trabajos prácticos asignados a este curso todavía.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,11 +1,20 @@
 from django import forms
-from .models import Estudiante, Curso, Profesor, TrabajoPractico, Entrega
+from django.contrib.auth.models import User
+from .models import Estudiante, Profesor, Curso, TrabajoPractico, Entrega
 
 class EstudianteForm(forms.ModelForm):
+    username = forms.CharField(label="Nombre de Usuario", required=True, widget=forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control rounded-3 custom-input'}), required=True, label="Contraseña inicial")
+
     class Meta:
         model = Estudiante
-        fields = ['nombre', 'apellido', 'email']
-
+        fields = ['nombre', 'apellido', 'email', 'username', 'password']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}),
+            'apellido': forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control rounded-3 custom-input'}),
+        }
+        
 class CursoFormulario(forms.ModelForm):
     class Meta:
         model = Curso
@@ -16,9 +25,12 @@ class CursoFormulario(forms.ModelForm):
         }
 
 class ProfesorForm(forms.ModelForm):
+    username = forms.CharField(label="Nombre de Usuario", required=True, widget=forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control rounded-3 custom-input'}), required=True, label="Contraseña inicial")
+
     class Meta:
         model = Profesor
-        fields = ['nombre', 'apellido', 'email', 'profesion', 'curso_asignado']
+        fields = ['nombre', 'apellido', 'email', 'profesion', 'curso_asignado', 'username', 'password']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control form-control-lg rounded-3 fs-6 custom-input', 'placeholder': 'Ej: Ana'}),
             'apellido': forms.TextInput(attrs={'class': 'form-control form-control-lg rounded-3 fs-6 custom-input', 'placeholder': 'Ej: Pérez'}),
@@ -41,9 +53,8 @@ class TrabajoPracticoForm(forms.ModelForm):
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = Entrega
-        fields = ['archivo', 'entregado', 'nota']
+        # Solo permitimos que el alumno suba el archivo. La nota queda excluida.
+        fields = ['archivo'] 
         widgets = {
             'archivo': forms.ClearableFileInput(attrs={'class': 'form-control rounded-3 custom-input'}),
-            'entregado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'nota': forms.NumberInput(attrs={'class': 'form-control rounded-3 custom-input', 'step': '0.1'}),
         }
