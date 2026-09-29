@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Estudiante, Profesor, Curso, Entregable
-from .forms import CursoFormulario, ProfesorFormulario, EstudianteForm
+from .forms import CursoFormulario, ProfesorForm, EstudianteForm
 
 def index(request):
     return render(request, 'myapp/index.html')
@@ -72,7 +72,7 @@ def profesores(request):
 
 def profesorFormulario(request):
     if request.method == "POST":
-        form = ProfesorFormulario(request.POST)
+        form = ProfesorForm(request.POST)
         if form.is_valid():
             Profesor.objects.create(
                 nombre=form.cleaned_data["nombre"],
@@ -83,14 +83,14 @@ def profesorFormulario(request):
             )
             return render(request, "myapp/profesor_exito.html")
     else:
-        form = ProfesorFormulario()
+        form = ProfesorForm()
     return render(request, "myapp/profesor_formulario.html", {"form": form})
 
 # Editar
 def editar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
-        form = ProfesorFormulario(request.POST)
+        form = ProfesorForm(request.POST)
         if form.is_valid():
             profesor.nombre = form.cleaned_data["nombre"]
             profesor.apellido = form.cleaned_data["apellido"]
@@ -101,7 +101,7 @@ def editar_profesor(request, pk):
             return redirect('myapp:profesores')
     else:
         # Pre-poblamos el formulario con los datos existentes
-        form = ProfesorFormulario(initial={
+        form = ProfesorForm(initial={
             'nombre': profesor.nombre,
             'apellido': profesor.apellido,
             'email': profesor.email,
@@ -123,3 +123,14 @@ def eliminar_profesor(request, pk):
 def entregables(request):
     entregables = Entregable.objects.all()
     return render(request, 'myapp/entregables.html', {'entregables': entregables})
+
+def cursoFormulario(request):
+    if request.method == 'POST':
+        form = CursoFormulario(request.POST, request.FILES)  # request.FILES es indispensable
+        if form.is_valid():
+            form.save()
+            return redirect('myapp:cursos')
+    else:
+        form = CursoFormulario()
+       
+    return render(request, 'myapp/curso_formulario.html', {'form': form})

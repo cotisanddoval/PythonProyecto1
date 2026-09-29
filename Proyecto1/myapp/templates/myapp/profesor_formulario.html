@@ -1,13 +1,115 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Formulario de Docente - Sistema Académico
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h2>Formulario de Profesor</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="{% url 'myapp:profesores' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                
+                <!-- Encabezado con color temático -->
+                <div class="p-4 text-center text-white" style="background-color: #631925;">
+                    <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: rgba(255, 255, 255, 0.12);">
+                        <i class="bi bi-person-badge fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{% if form.instance.pk %}Editar Docente{% else %}Registrar Docente{% endif %}</h3>
+                    <p class="small text-white-50 mb-0">Completa los datos personales y el curso a cargo</p>
+                </div>
+
+                <!-- Formulario -->
+                <div class="card-body p-4 p-md-5">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small rounded-3">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <!-- Nombre -->
+                            <div class="col-md-6 mb-2">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                    Nombre
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Apellido -->
+                            <div class="col-md-6 mb-2">
+                                <label for="{{ form.apellido.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                    Apellido
+                                </label>
+                                {{ form.apellido }}
+                                {% if form.apellido.errors %}
+                                    <div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Correo Electrónico
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Rol (Desplegable Profesor / Profesora) -->
+                        <div class="mb-3">
+                            <label for="{{ form.profesion.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Rol / Tratamiento
+                            </label>
+                            {{ form.profesion }}
+                            {% if form.profesion.errors %}
+                                <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Curso asignado (Desplegable dinámico de cursos) -->
+                        <div class="mb-4">
+                            <label for="{{ form.curso_asignado.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Asignar Curso
+                            </label>
+                            {{ form.curso_asignado }}
+                            {% if form.curso_asignado.errors %}
+                                <div class="text-danger small mt-1">{{ form.curso_asignado.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-lg text-white rounded-pill fw-semibold shadow-sm" style="background-color: #631925; border: none;">
+                                Guardar Información
+                            </button>
+                            <a href="{% url 'myapp:profesores' %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">
+                                Cancelar y volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<style>
+    .custom-input:focus {
+        border-color: #631925 !important;
+        box-shadow: 0 0 0 0.25rem rgba(99, 25, 37, 0.15) !important;
+    }
+</style>
 {% endblock %}

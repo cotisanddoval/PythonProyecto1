@@ -10,22 +10,28 @@ class Estudiante(models.Model):
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
-class Profesor(models.Model):
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    email = models.EmailField()
-    profesion = models.CharField(max_length=100)
-    materiaAsignada = models.CharField(max_length=100)
-    
-    def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.profesion}"
-
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     camada = models.IntegerField()
+    imagen = models.ImageField(upload_to='cursos/', null=True, blank=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} (Camada {self.camada})"
+
+class Profesor(models.Model):
+    ROLES = [
+        ('Profesor', 'Profesor'),
+        ('Profesora', 'Profesora'),
+    ]
+
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField()
+    profesion = models.CharField(max_length=20, choices=ROLES, default='Profesor', verbose_name="Título / Rol")
+    curso_asignado = models.ForeignKey(Curso, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Curso Asignado")
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
 
 class Entregable(models.Model):
     nombre = models.CharField(max_length=100)

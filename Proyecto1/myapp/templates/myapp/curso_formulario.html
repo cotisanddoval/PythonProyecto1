@@ -1,21 +1,103 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Agregar Curso
+Agregar Curso - Sistema Académico
 {% endblock %}
 
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-5">
+            
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="p-4 text-center text-white" style="background-color: #631925;">
+                    <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: rgba(255, 255, 255, 0.12);">
+                        <i class="bi bi-journal-plus fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Agregar Curso</h3>
+                    <p class="small text-white-50 mb-0">Completa los datos y la portada de la materia</p>
+                </div>
 
-<h1>Agregar Curso</h1>
+                <div class="card-body p-4 p-md-5">
+                    <!-- enctype="multipart/form-data" es fundamental para enviar imágenes -->
+                    <form action="{% url 'myapp:cursoFormulario' %}" method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
 
-<form action="{% url 'myapp:cursoFormulario' %}" method="post">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small rounded-3">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
 
-    {% csrf_token %}
+                        <!-- Nombre -->
+                        <div class="mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Nombre del Curso
+                            </label>
+                            <input type="text" 
+                                   name="{{ form.nombre.name }}" 
+                                   id="{{ form.nombre.id_for_label }}" 
+                                   value="{{ form.nombre.value|default_if_none:'' }}"
+                                   placeholder="Ej: Programación Web"
+                                   class="form-control form-control-lg rounded-3 fs-6 custom-input"
+                                   required>
+                            {% if form.nombre.errors %}
+                                <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
+                            {% endif %}
+                        </div>
 
-    {{ form.as_p }}
+                        <!-- Camada -->
+                        <div class="mb-3">
+                            <label for="{{ form.camada.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Número de Camada / Comisión
+                            </label>
+                            <input type="number" 
+                                   name="{{ form.camada.name }}" 
+                                   id="{{ form.camada.id_for_label }}" 
+                                   value="{{ form.camada.value|default_if_none:'' }}"
+                                   placeholder="Ej: 1"
+                                   class="form-control form-control-lg rounded-3 fs-6 custom-input"
+                                   required>
+                            {% if form.camada.errors %}
+                                <div class="text-danger small mt-1">{{ form.camada.errors.0 }}</div>
+                            {% endif %}
+                        </div>
 
-    <button type="submit">Enviar</button>
+                        <!-- Foto de portada -->
+                        <div class="mb-4">
+                            <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                                Foto de Portada (Opcional)
+                            </label>
+                            <input type="file" 
+                                   name="{{ form.imagen.name }}" 
+                                   id="{{ form.imagen.id_for_label }}" 
+                                   accept="image/*"
+                                   class="form-control rounded-3 fs-6 custom-input">
+                            {% if form.imagen.errors %}
+                                <div class="text-danger small mt-1">{{ form.imagen.errors.0 }}</div>
+                            {% endif %}
+                        </div>
 
-</form>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-lg text-white rounded-pill fw-semibold shadow-sm" style="background-color: #631925; border: none;">
+                                Guardar Curso
+                            </button>
+                            <a href="{% url 'myapp:cursos' %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">
+                                Volver al catálogo
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-input:focus {
+        border-color: #631925 !important;
+        box-shadow: 0 0 0 0.25rem rgba(99, 25, 37, 0.15) !important;
+    }
+</style>
 {% endblock %}

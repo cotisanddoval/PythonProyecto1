@@ -1,29 +1,98 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Cursos
+Cursos - Sistema Académico
 {% endblock %}
 
 {% block content %}
+<div class="container py-4">
 
-<h1>Lista de Cursos</h1>
+    <!-- Encabezado con botón de acción -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h2 fw-bold mb-1" style="color: #4a121a;">Catálogo de Cursos</h1>
+            <p class="text-muted mb-0">Explora todos los programas académicos y camadas activas.</p>
+        </div>
+        <a href="{% url 'myapp:cursoFormulario' %}" class="btn text-white px-4 py-2 rounded-pill shadow-sm" style="background-color: #631925; border: none;">
+            <i class="bi bi-plus-circle me-1"></i> + Agregar Curso
+        </a>
+    </div>
 
-<a href="{% url 'myapp:cursoFormulario' %}">
-    Agregar Curso
-</a>
+    <!-- Grilla de Tarjetas -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for curso in cursos %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover" style="background-color: #ffffff; transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                
+                <!-- Reemplaza el bloque de imagen dentro del card en cursos.html por esto: -->
+<div class="position-relative" style="height: 190px;">
+    {% if curso.imagen %}
+        <img src="{{ curso.imagen.url }}" 
+             class="w-100 h-100 object-fit-cover" 
+             alt="{{ curso.nombre }}">
+    {% else %}
+        <img src="https://picsum.photos/seed/{{ curso.id }}/600/350" 
+             class="w-100 h-100 object-fit-cover" 
+             alt="{{ curso.nombre }}">
+    {% endif %}
 
-<hr>
+    <span class="badge position-absolute top-0 end-0 m-3 px-3 py-2 rounded-pill shadow-sm" 
+          style="background-color: #631925; font-size: 0.85rem; letter-spacing: 0.5px;">
+        Camada #{{ curso.camada }}
+    </span>
+</div>
 
-{% for curso in cursos %}
+                <!-- Cuerpo de la tarjeta -->
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="mb-2">
+                        <span class="text-uppercase fw-semibold" style="font-size: 0.75rem; color: #a3704c;">
+                            Tecnicatura &middot; Desarrollo
+                        </span>
+                    </div>
 
-    <p>
-        <strong>{{ curso.nombre }}</strong> - Camada {{ curso.camada }}
-    </p>
+                    <h5 class="card-title fw-bold mb-2" style="color: #2b1116;">
+                        {{ curso.nombre }}
+                    </h5>
 
-{% empty %}
+                    <p class="card-text text-muted small flex-grow-1">
+                        Programa de formación orientado a proyectos reales, desarrollo práctico y habilidades profesionales.
+                    </p>
 
-    <p>No hay cursos cargados.</p>
+                    <hr class="my-3 opacity-10">
 
-{% endfor %}
+                    <!-- Acciones / Pie de tarjeta -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small fw-semibold text-secondary">
+                            <i class="bi bi-mortarboard me-1"></i> Activo
+                        </span>
+                        <a href="#" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                            Ver programa &rarr;
+                        </a>
+                    </div>
+                </div>
 
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm mx-auto" style="max-width: 500px;">
+                <h4 class="fw-bold" style="color: #631925;">No hay cursos cargados</h4>
+                <p class="text-muted small">Aún no se crearon asignaturas en la base de datos.</p>
+                <a href="{% url 'myapp:cursoFormulario' %}" class="btn btn-sm text-white px-3 py-2 rounded-pill" style="background-color: #631925;">
+                    Crear el primer curso
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- Efecto sutil al pasar el mouse por las tarjetas -->
+<style>
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 22px rgba(43, 17, 22, 0.12) !important;
+    }
+</style>
 {% endblock %}
