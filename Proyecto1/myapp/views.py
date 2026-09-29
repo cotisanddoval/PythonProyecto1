@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Estudiante, Profesor, Curso, Entregable
-from .forms import CursoFormulario, ProfesorForm, EstudianteForm, EntregableForm
+from .models import Estudiante, Profesor, Curso, TrabajoPractico, Entrega
+from .forms import CursoFormulario, ProfesorForm, EstudianteForm, TrabajoPracticoForm, EntregaForm
 
 def index(request):
     return render(request, 'myapp/index.html')
@@ -52,7 +52,7 @@ def cursos(request):
 
 def cursoFormulario(request):
     if request.method == 'POST':
-        form = CursoFormulario(request.POST, request.FILES)  # request.FILES es indispensable
+        form = CursoFormulario(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('myapp:cursos')
@@ -60,6 +60,25 @@ def cursoFormulario(request):
         form = CursoFormulario()
        
     return render(request, 'myapp/curso_formulario.html', {'form': form})
+
+def editar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        form = CursoFormulario(request.POST, request.FILES, instance=curso)
+        if form.is_valid():
+            form.save()
+            return redirect('myapp:cursos')
+    else:
+        form = CursoFormulario(instance=curso)
+    
+    return render(request, 'myapp/curso_formulario.html', {'form': form})
+
+def eliminar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        curso.delete()
+        return redirect('myapp:cursos')
+    return render(request, 'myapp/curso_confirm_delete.html', {'curso': curso})
 
 
 # --- PROFESORES ---
@@ -77,14 +96,13 @@ def profesorFormulario(request):
                 apellido=form.cleaned_data["apellido"],
                 email=form.cleaned_data["email"],
                 profesion=form.cleaned_data["profesion"],
-                curso_asignado=form.cleaned_data["curso_asignado"]  # <-- corregido aquí
+                curso_asignado=form.cleaned_data["curso_asignado"]
             )
             return render(request, "myapp/profesor_exito.html")
     else:
         form = ProfesorForm()
     return render(request, "myapp/profesor_formulario.html", {"form": form})
 
-# Editar
 def editar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
@@ -94,21 +112,19 @@ def editar_profesor(request, pk):
             profesor.apellido = form.cleaned_data["apellido"]
             profesor.email = form.cleaned_data["email"]
             profesor.profesion = form.cleaned_data["profesion"]
-            profesor.curso_asignado = form.cleaned_data["curso_asignado"]  # <-- corregido aquí
+            profesor.curso_asignado = form.cleaned_data["curso_asignado"]
             profesor.save()
             return redirect('myapp:profesores')
     else:
-        # Pre-poblamos el formulario con los datos existentes
         form = ProfesorForm(initial={
             'nombre': profesor.nombre,
             'apellido': profesor.apellido,
             'email': profesor.email,
             'profesion': profesor.profesion,
-            'curso_asignado': profesor.curso_asignado,  # <-- corregido aquí (era línea 109)
+            'curso_asignado': profesor.curso_asignado,
         })
     return render(request, 'myapp/profesor_formulario.html', {'form': form})
 
-# Eliminar
 def eliminar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
@@ -116,59 +132,43 @@ def eliminar_profesor(request, pk):
         return redirect('myapp:profesores')
     return render(request, 'myapp/profesor_confirm_delete.html', {'profesor': profesor})
 
-# --- ENTREGABLES ---
 
-def entregables(request):
-    entregables = Entregable.objects.all()
-    return render(request, 'myapp/entregables.html', {'entregables': entregables})
+# --- TRABAJOS PRÁCTICOS ---
 
-# --- ENTREGABLES (CRUD) ---
+def trabajos_practicos(request):
+    trabajos = TrabajoPractico.objects.all()
+    return render(request, 'myapp/trabajos_practicos.html', {'trabajos': trabajos})
 
-def crear_entregable(request):
+def crear_trabajo_practico(request):
     if request.method == 'POST':
-        form = EntregableForm(request.POST)
+        form = TrabajoPracticoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('myapp:entregables')
+            return redirect('myapp:trabajos_practicos')
     else:
-        form = EntregableForm()
-    return render(request, 'myapp/entregable_form.html', {'form': form})
+        form = TrabajoPracticoForm()
+    return render(request, 'myapp/trabajo_practico_form.html', {'form': form})
 
-def editar_entregable(request, pk):
-    entregable = get_object_or_404(Entregable, pk=pk)
+def editar_trabajo_practico(request, pk):
+    trabajo = get_object_or_404(TrabajoPractico, pk=pk)
     if request.method == 'POST':
-        form = EntregableForm(request.POST, instance=entregable)
+        form = TrabajoPracticoForm(request.POST, instance=trabajo)
         if form.is_valid():
             form.save()
-            return redirect('myapp:entregables')
+            return redirect('myapp:trabajos_practicos')
     else:
-        form = EntregableForm(instance=entregable)
-    return render(request, 'myapp/entregable_form.html', {'form': form})
+        form = TrabajoPracticoForm(instance=trabajo)
+    return render(request, 'myapp/trabajo_practico_form.html', {'form': form})
 
-def eliminar_entregable(request, pk):
-    entregable = get_object_or_404(Entregable, pk=pk)
+def eliminar_trabajo_practico(request, pk):
+    trabajo = get_object_or_404(TrabajoPractico, pk=pk)
     if request.method == 'POST':
-        entregable.delete()
-        return redirect('myapp:entregables')
-    return render(request, 'myapp/entregable_confirm_delete.html', {'entregable': entregable})
+        trabajo.delete()
+        return redirect('myapp:trabajos_practicos')
+    return render(request, 'myapp/trabajo_practico_confirm_delete.html', {'trabajo': trabajo})
 
-# Editar Curso
-def editar_curso(request, pk):
-    curso = get_object_or_404(Curso, pk=pk)
-    if request.method == 'POST':
-        form = CursoFormulario(request.POST, request.FILES, instance=curso)
-        if form.is_valid():
-            form.save()
-            return redirect('myapp:cursos')
-    else:
-        form = CursoFormulario(instance=curso)
-    
-    return render(request, 'myapp/curso_formulario.html', {'form': form})
-
-# Eliminar Curso
-def eliminar_curso(request, pk):
-    curso = get_object_or_404(Curso, pk=pk)
-    if request.method == 'POST':
-        curso.delete()
-        return redirect('myapp:cursos')
-    return render(request, 'myapp/curso_confirm_delete.html', {'curso': curso})
+# --- DETALLE DEL TRABAJO (Para ver quién entregó) ---
+def detalle_trabajo_practico(request, pk):
+    trabajo = get_object_or_404(TrabajoPractico, pk=pk)
+    entregas = trabajo.entregas.all()
+    return render(request, 'myapp/trabajo_practico_detail.html', {'trabajo': trabajo, 'entregas': entregas})

@@ -4,6 +4,7 @@ from . import views
 app_name = 'myapp'
 
 urlpatterns = [
+    # Inicio
     path('', views.index, name='index'),
 
     # Estudiantes
@@ -24,11 +25,11 @@ urlpatterns = [
     path('profesores/crear/', views.profesorFormulario, name='profesorFormulario'),
     path('profesores/editar/<int:pk>/', views.editar_profesor, name='editar_profesor'),
     path('profesores/eliminar/<int:pk>/', views.eliminar_profesor, name='eliminar_profesor'),
-    
-    # Entregables
-    
-    path('entregables/', views.entregables, name='entregables'),
-    path('entregables/crear/', views.crear_entregable, name='crear_entregable'),
-    path('entregables/editar/<int:pk>/', views.editar_entregable, name='editar_entregable'),
-    path('entregables/eliminar/<int:pk>/', views.eliminar_entregable, name='eliminar_entregable'),
+
+    # Trabajos Prácticos
+    path('trabajos/', views.trabajos_practicos, name='trabajos_practicos'),
+    path('trabajos/crear/', views.crear_trabajo_practico, name='crear_trabajo_practico'),
+    path('trabajos/<int:pk>/', views.detalle_trabajo_practico, name='detalle_trabajo_practico'),
+    path('trabajos/editar/<int:pk>/', views.editar_trabajo_practico, name='editar_trabajo_practico'),
+    path('trabajos/eliminar/<int:pk>/', views.eliminar_trabajo_practico, name='eliminar_trabajo_practico'),
 ]

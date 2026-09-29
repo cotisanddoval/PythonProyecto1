@@ -1,5 +1,5 @@
 from django import forms
-from .models import Estudiante, Curso, Profesor, Entregable
+from .models import Estudiante, Curso, Profesor, TrabajoPractico, Entrega
 
 class EstudianteForm(forms.ModelForm):
     class Meta:
@@ -27,15 +27,23 @@ class ProfesorForm(forms.ModelForm):
             'curso_asignado': forms.Select(attrs={'class': 'form-select form-select-lg rounded-3 fs-6 custom-input'}),
         }
         
-class EntregableForm(forms.ModelForm):
+class TrabajoPracticoForm(forms.ModelForm):
     class Meta:
-        model = Entregable
-        fields = ['nombre', 'curso', 'estudiante', 'fecha_inicio', 'entregado', 'nota']
+        model = TrabajoPractico
+        fields = ['titulo', 'descripcion', 'curso', 'fecha_entrega']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control rounded-3 custom-input'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control rounded-3 custom-input', 'rows': 3}),
             'curso': forms.Select(attrs={'class': 'form-select rounded-3 custom-input'}),
-            'estudiante': forms.Select(attrs={'class': 'form-select rounded-3 custom-input'}),
-            'fecha_inicio': forms.DateInput(attrs={'class': 'form-control rounded-3 custom-input', 'type': 'date'}),
+            'fecha_entrega': forms.DateInput(attrs={'class': 'form-control rounded-3 custom-input', 'type': 'date'}),
+        }
+
+class EntregaForm(forms.ModelForm):
+    class Meta:
+        model = Entrega
+        fields = ['archivo', 'entregado', 'nota']
+        widgets = {
+            'archivo': forms.ClearableFileInput(attrs={'class': 'form-control rounded-3 custom-input'}),
             'entregado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'nota': forms.NumberInput(attrs={'class': 'form-control rounded-3 custom-input', 'step': '0.1'}),
         }
