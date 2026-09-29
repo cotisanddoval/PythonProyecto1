@@ -19,6 +19,8 @@ class Curso(models.Model):
     activo = models.BooleanField(default=True, verbose_name="¿Curso Activo?")
     fecha_inicio = models.DateField(null=True, blank=True, verbose_name="Fecha de Inicio")
     fecha_fin = models.DateField(null=True, blank=True, verbose_name="Fecha de Finalización")
+    # En tu models.py, dentro de la clase Curso:
+    password_curso = models.CharField(max_length=50, blank=True, null=True, verbose_name="Contraseña del curso")
 
     def __str__(self):
         return f"{self.nombre} (Camada {self.camada})"

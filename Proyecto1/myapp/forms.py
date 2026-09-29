@@ -18,7 +18,7 @@ class EstudianteForm(forms.ModelForm):
 class CursoFormulario(forms.ModelForm):
     class Meta:
         model = Curso
-        fields = ['nombre', 'camada', 'imagen', 'activo', 'fecha_inicio', 'fecha_fin']
+        fields = ['nombre', 'camada', 'imagen', 'activo', 'fecha_inicio', 'fecha_fin', 'password_curso']
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-lg rounded-3 custom-input'}),
             'fecha_fin': forms.DateInput(attrs={'type': 'date', 'class': 'form-control form-control-lg rounded-3 custom-input'}),

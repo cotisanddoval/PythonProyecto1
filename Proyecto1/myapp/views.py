@@ -36,8 +36,15 @@ def subir_entrega(request, tp_id):
 @login_required
 def detalle_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
-    trabajos = TrabajoPractico.objects.filter(curso=curso)
     
+    # Si es alumno, validamos que haya puesto la contraseña
+    if hasattr(request.user, 'perfil') and request.user.perfil.rol == 'alumno':
+        if curso.password_curso:
+            cursos_autorizados = request.session.get('cursos_autorizados', [])
+            if curso.id not in cursos_autorizados:
+                return redirect('myapp:ingresar_curso', curso_id=curso.id)
+
+    trabajos = TrabajoPractico.objects.filter(curso=curso)
     return render(request, 'myapp/detalle_curso.html', {
         'curso': curso,
         'trabajos': trabajos,
@@ -317,3 +324,34 @@ def panel_alumno(request):
         'entregas': entregas,
         'cursos': cursos,
     })
+    
+@login_required
+def ingresar_curso(request, curso_id):
+    curso = get_object_or_404(Curso, id=curso_id)
+    
+    # Si es profesor o admin, entran directo sin clave
+    if hasattr(request.user, 'perfil') and request.user.perfil.rol in ['admin', 'profesor']:
+        return redirect('myapp:detalle_curso', curso_id=curso.id)
+        
+    # Si el curso no tiene contraseña, entra directo
+    if not curso.password_curso:
+        return redirect('myapp:detalle_curso', curso_id=curso.id)
+        
+    # Verificamos si ya guardó la autorización en la sesión del navegador
+    cursos_autorizados = request.session.get('cursos_autorizados', [])
+    if curso.id in cursos_autorizados:
+        return redirect('myapp:detalle_curso', curso_id=curso.id)
+        
+    error = None
+    if request.method == 'POST':
+        clave_ingresada = request.POST.get('password')
+        if clave_ingresada == curso.password_curso:
+            # Guardamos en la sesión que este usuario ya está autorizado para este curso
+            if curso.id not in cursos_autorizados:
+                cursos_autorizados.append(curso.id)
+                request.session['cursos_autorizados'] = cursos_autorizados
+            return redirect('myapp:detalle_curso', curso_id=curso.id)
+        else:
+            error = "Contraseña incorrecta. Solicítala al profesor o administrador."
+            
+    return render(request, 'myapp/ingresar_curso.html', {'curso': curso, 'error': error})

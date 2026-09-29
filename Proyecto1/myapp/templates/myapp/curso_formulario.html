@@ -44,6 +44,13 @@
                         <input type="number" name="{{ form.camada.name }}" id="{{ form.camada.id_for_label }}" value="{{ form.camada.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
                     </div>
 
+                    <!-- Contraseña del curso -->
+                    <div class="mb-3">
+                        <label for="{{ form.password_curso.id_for_label }}" class="form-label fw-semibold small text-secondary">Contraseña del Curso (Opcional)</label>
+                        <input type="text" name="{{ form.password_curso.name }}" id="{{ form.password_curso.id_for_label }}" value="{{ form.password_curso.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" placeholder="Clave de acceso para alumnos">
+                        <div class="form-text text-muted small mt-1">Si se deja vacío, el curso será de acceso libre.</div>
+                    </div>
+
                     <!-- Foto de portada -->
                     <div class="mb-3">
                         <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold small text-secondary">Foto de Portada (Opcional)</label>

@@ -1,50 +1,84 @@
 {% extends 'base.html' %}
 
-{% block title %}
-{{ curso.nombre }} - Sistema Académico
-{% endblock %}
+{% block title %}{{ curso.nombre }} - Detalle del Curso{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'myapp:cursos' %}">Cursos</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ curso.nombre }}</li>
-                </ol>
-            </nav>
-            <div class="p-4 rounded-4 text-white shadow-sm" style="background-color: #631925;">
-                <h1 class="fw-bold" style="color: #dfd790 !important;">{{ curso.nombre }}</h1>
-                <p class="mb-0">Camada: {{ curso.camada }} | Inicio: {{ curso.fecha_inicio|date:"d/m/Y" }}</p>
+
+    <!-- Botón para volver -->
+    <div class="mb-3">
+        <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left me-1"></i> Volver al catálogo de cursos
+        </a>
+    </div>
+
+    <!-- Cabecera del Curso -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background-color: #631925;">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <span class="badge mb-2 px-3 py-2 rounded-pill" style="background-color: #dfd790; color: #4a4a4a;">
+                    Camada #{{ curso.camada }}
+                </span>
+                <h1 class="fw-bold mb-1" style="color: #dfd790;">{{ curso.nombre }}</h1>
+                <p class="mb-0 opacity-75">
+                    <i class="bi bi-calendar-event me-2"></i>Inicio: {{ curso.fecha_inicio|date:"d M Y"|default:"No especificada" }} 
+                    &nbsp;|&nbsp; 
+                    <i class="bi bi-calendar-check me-2"></i>Fin: {{ curso.fecha_fin|date:"d M Y"|default:"No especificada" }}
+                </p>
             </div>
+            
+            <!-- Botón para que el profe/admin cree un nuevo TP para este curso si lo desea -->
+            {% if user.is_authenticated and user.perfil.rol in 'admin,profesor' %}
+            <div>
+                <a href="{% url 'myapp:crear_trabajo_practico' %}" class="btn text-white rounded-pill px-4 shadow-sm fw-semibold" style="background-color: #a3704c; border: none;">
+                    <i class="bi bi-plus-circle me-1"></i> Nuevo Trabajo Práctico
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <h3 class="fw-bold mb-3" style="color: #631925;">Trabajos Prácticos del Curso</h3>
-    
-    <div class="row g-4">
-        {% for tp in trabajos %}
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
-                    <h5 class="fw-bold text-dark">{{ tp.titulo }}</h5>
-                    <p class="text-muted small">{{ tp.descripcion }}</p>
-                    <p class="small fw-semibold text-secondary">Fecha límite: {{ tp.fecha_entrega|date:"d/m/Y" }}</p>
-                    
-                    {% if user.perfil.rol == 'alumno' %}
-                        <a href="{% url 'myapp:subir_entrega' tp.id %}" class="btn btn-sm text-white rounded-pill" style="background-color: #631925;">
-                            <i class="bi bi-upload"></i> Subir / Ver Mi Trabajo
-                        </a>
-                    {% endif %}
+    <!-- Lista de Trabajos Prácticos -->
+    <h3 class="fw-bold mb-3" style="color: #4a121a;">Trabajos Prácticos del Curso</h3>
+
+    <div class="row row-cols-1 g-3">
+        {% for trabajo in trabajos %}
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1" style="color: #2b1116;">{{ trabajo.titulo }}</h4>
+                        <p class="text-muted small mb-2">{{ trabajo.descripcion|default:"Sin descripción detallada." }}</p>
+                        <span class="badge bg-light text-secondary border px-3 py-1 rounded-pill">
+                            <i class="bi bi-calendar-x me-1"></i> Fecha límite: {{ trabajo.fecha_entrega|date:"d/m/Y" }}
+                        </span>
+                    </div>
+
+                    <!-- Botones de acción según el rol -->
+                    <div class="d-flex align-items-center gap-2">
+                        {% if user.is_authenticated and user.perfil.rol in 'admin,profesor' %}
+                            <!-- Botón directo para que el profesor corrija las entregas de este TP -->
+                            <a href="{% url 'myapp:detalle_trabajo_practico' trabajo.pk %}" class="btn text-white rounded-pill px-4 shadow-sm fw-semibold" style="background-color: #631925;">
+                                <i class="bi bi-journal-check me-1"></i> Ver Entregas y Calificar
+                            </a>
+                        {% else %}
+                            <!-- Botón para que el alumno suba o vea su entrega -->
+                            <a href="{% url 'myapp:subir_entrega' trabajo.pk %}" class="btn text-white rounded-pill px-4 shadow-sm fw-semibold" style="background-color: #631925;">
+                                <i class="bi bi-upload me-1"></i> Subir / Ver Mi Entrega
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+        </div>
         {% empty %}
-            <div class="col-12">
-                <div class="alert alert-light text-center py-4 text-muted rounded-4 shadow-sm">
-                    No hay trabajos prácticos asignados a este curso todavía.
-                </div>
+        <div class="col text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm mx-auto" style="max-width: 450px;">
+                <p class="text-muted mb-0">Aún no hay trabajos prácticos asignados a este curso.</p>
             </div>
+        </div>
         {% endfor %}
     </div>
+
 </div>
 {% endblock %}

@@ -97,8 +97,8 @@ Cursos - Instituto Tecnológico Saint-Exupéry
                                     </a>
                                 </div>
                             {% else %}
-                                <!-- Botón dinámico para Alumnos u otros usuarios autenticados -->
-                                <a href="{% url 'myapp:detalle_curso' curso.pk %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" style="background-color: #631925;">
+                                <!-- Botón dinámico que redirige a la validación de contraseña del curso -->
+                                <a href="{% url 'myapp:ingresar_curso' curso.id %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" style="background-color: #631925;">
                                     <i class="bi bi-journal-check me-1"></i> Cursar / Ver TPs
                                 </a>
                             {% endif %}
