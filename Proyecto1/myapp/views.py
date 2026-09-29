@@ -79,7 +79,7 @@ def profesorFormulario(request):
                 apellido=form.cleaned_data["apellido"],
                 email=form.cleaned_data["email"],
                 profesion=form.cleaned_data["profesion"],
-                materiaAsignada=form.cleaned_data["materiaAsignada"]
+                curso_asignado=form.cleaned_data["curso_asignado"]  # <-- corregido aquí
             )
             return render(request, "myapp/profesor_exito.html")
     else:
@@ -96,7 +96,7 @@ def editar_profesor(request, pk):
             profesor.apellido = form.cleaned_data["apellido"]
             profesor.email = form.cleaned_data["email"]
             profesor.profesion = form.cleaned_data["profesion"]
-            profesor.materiaAsignada = form.cleaned_data["materiaAsignada"]
+            profesor.curso_asignado = form.cleaned_data["curso_asignado"]  # <-- corregido aquí
             profesor.save()
             return redirect('myapp:profesores')
     else:
@@ -106,7 +106,7 @@ def editar_profesor(request, pk):
             'apellido': profesor.apellido,
             'email': profesor.email,
             'profesion': profesor.profesion,
-            'materiaAsignada': profesor.materiaAsignada,
+            'curso_asignado': profesor.curso_asignado,  # <-- corregido aquí (era línea 109)
         })
     return render(request, 'myapp/profesor_formulario.html', {'form': form})
 

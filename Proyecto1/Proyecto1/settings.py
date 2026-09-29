@@ -110,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ar'
 
 TIME_ZONE = 'UTC'
 
@@ -132,8 +132,8 @@ import os
 
 #Ruta URL para acceder a los archivos multimedia
 
-MEDIA_URL = '/avatares/'
+MEDIA_URL = '/media/'
 
 #Ruta de la carpeta donde se guardaran los archivos multimedia
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'avatares')
+MEDIA_ROOT = BASE_DIR / 'media'
