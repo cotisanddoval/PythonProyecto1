@@ -24,9 +24,8 @@ Profesores - Sistema Académico
             <table class="table table-hover align-middle mb-0 custom-table">
                 <thead style="background-color: #fcfaf8;">
                     <tr>
-                        <th class="py-3 px-4 text-secondary fw-semibold small text-uppercase">Profesor</th>
+                        <th class="py-3 px-4 text-secondary fw-semibold small text-uppercase">Docente</th>
                         <th class="py-3 px-3 text-secondary fw-semibold small text-uppercase">Email</th>
-                        <th class="py-3 px-3 text-secondary fw-semibold small text-uppercase">Rol</th>
                         <th class="py-3 px-3 text-secondary fw-semibold small text-uppercase">Curso</th>
                         <th class="py-3 px-4 text-secondary fw-semibold small text-uppercase text-end">Acciones</th>
                     </tr>
@@ -49,13 +48,8 @@ Profesores - Sistema Académico
                             </div>
                         </td>
                         
-                        <!-- Resto de las columnas -->
+                        <!-- Resto de las columnas (Sin la columna de rol) -->
                         <td class="py-3 px-3 text-muted small">{{ profesor.email }}</td>
-                        <td class="py-3 px-3">
-                            <span class="badge bg-light text-secondary border px-2 py-1 rounded-pill fw-medium">
-                                {{ profesor.profesion }}
-                            </span>
-                        </td>
                         <td class="py-3 px-3">
                             <span class="text-muted small fw-medium">
                                 <i class="bi bi-book me-1"></i> 
@@ -67,7 +61,7 @@ Profesores - Sistema Académico
                             </span>
                         </td>
                         
-                        <!-- Columna de Botones (con íconos en vez de texto pesado) -->
+                        <!-- Columna de Botones -->
                         <td class="py-3 px-4 text-end">
                             <a href="{% url 'myapp:editar_profesor' profesor.pk %}" 
                                class="btn btn-sm btn-light text-secondary rounded-circle me-1 border action-btn" 
@@ -83,7 +77,7 @@ Profesores - Sistema Académico
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-5">
+                        <td colspan="4" class="text-center py-5">
                             <div class="text-muted">
                                 <i class="bi bi-people fs-1 d-block mb-3 opacity-50"></i>
                                 <h5 class="fw-semibold">No hay profesores registrados</h5>
@@ -99,7 +93,6 @@ Profesores - Sistema Académico
 </div>
 
 <style>
-    /* Estilos personalizados para suavizar la tabla */
     .custom-table tbody tr {
         transition: background-color 0.2s ease;
     }

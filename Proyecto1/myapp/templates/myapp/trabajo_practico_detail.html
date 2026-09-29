@@ -58,14 +58,15 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if entrega.entregado %}
+                        <!-- Validación inteligente: si hay archivo, nota o está marcado, se muestra como Entregado -->
+                        {% if entrega.entregado or entrega.archivo or entrega.nota is not None %}
                             <span class="badge bg-success rounded-pill px-3 py-2">Entregado</span>
                         {% else %}
                             <span class="badge bg-secondary rounded-pill px-3 py-2">Pendiente</span>
                         {% endif %}
                     </td>
                     <td>
-                        {% if entrega.nota %}
+                        {% if entrega.nota is not None %}
                             <span class="fw-bold fs-5" style="color: #631925;">{{ entrega.nota }}</span>
                         {% else %}
                             <span class="text-muted small">Sin calificar</span>
@@ -73,7 +74,7 @@
                     </td>
                     <td class="text-center">
                         <a href="{% url 'myapp:calificar_entrega' entrega.pk %}" class="btn btn-sm btn-outline-dark rounded-pill px-3 shadow-sm">
-                            <i class="bi bi-pencil-square me-1"></i> {% if entrega.nota %}Modificar Nota{% else %}Calificar{% endif %}
+                            <i class="bi bi-pencil-square me-1"></i> {% if entrega.nota is not None %}Modificar Nota{% else %}Calificar{% endif %}
                         </a>
                     </td>
                 </tr>

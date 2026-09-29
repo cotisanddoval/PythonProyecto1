@@ -68,8 +68,37 @@ def profesor_o_admin(view_func):
         return redirect('myapp:panel_alumno')
     return wrapper
 
+def profesor_titular_o_admin(view_func):
+    """Candado estricto: Permite ver/calificar solo al profesor titular de la materia o al admin."""
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated or not hasattr(request.user, 'perfil'):
+            return redirect('myapp:index')
+            
+        rol = request.user.perfil.rol
+        if rol == 'admin':
+            return view_func(request, *args, **kwargs)
+            
+        if rol == 'profesor':
+            # Buscamos al profesor por su email
+            profesor = Profesor.objects.filter(email=request.user.email).first()
+            tp_id = kwargs.get('pk')
+            
+            if profesor and profesor.curso_asignado and tp_id:
+                trabajo = TrabajoPractico.objects.filter(id=tp_id).first()
+                # Verificamos si el trabajo pertenece al curso asignado a este docente
+                if trabajo and trabajo.curso == profesor.curso_asignado:
+                    return view_func(request, *args, **kwargs)
+                    
+        # Si no es su materia, lo devolvemos al catálogo de cursos con una restricción visual
+        return redirect('myapp:cursos')
+    return wrapper
+
 def index(request):
     return render(request, 'myapp/index.html')
+
+@login_required
+def login_redirigido(request):
+    return redirect('myapp:index')
 
 # --- ESTUDIANTES ---
 
@@ -139,7 +168,19 @@ def eliminar_estudiante(request, pk):
 # --- CURSOS ---
 
 def cursos(request):
-    cursos = Curso.objects.all()
+    # Si el usuario es un profesor, filtramos para que solo vea su curso asignado
+    if request.user.is_authenticated and hasattr(request.user, 'perfil') and request.user.perfil.rol == 'profesor':
+        profesor = Profesor.objects.filter(email=request.user.email).first()
+        if profesor and profesor.curso_asignado:
+            # Mostramos únicamente el curso que tiene asignado
+            cursos = Curso.objects.filter(id=profesor.curso_asignado.id)
+        else:
+            # Si por alguna razón no tiene curso asignado, la lista se muestra vacía
+            cursos = Curso.objects.none()
+    else:
+        # Administradores y alumnos ven todo el catálogo de cursos
+        cursos = Curso.objects.all()
+        
     return render(request, 'myapp/cursos.html', {'cursos': cursos})
 
 @profesor_o_admin
@@ -211,24 +252,13 @@ def profesorFormulario(request):
 def editar_profesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     if request.method == 'POST':
-        form = ProfesorForm(request.POST)
+        form = ProfesorForm(request.POST, instance=profesor)
         if form.is_valid():
-            profesor.nombre = form.cleaned_data["nombre"]
-            profesor.apellido = form.cleaned_data["apellido"]
-            profesor.email = form.cleaned_data["email"]
-            profesor.profesion = form.cleaned_data["profesion"]
-            profesor.curso_asignado = form.cleaned_data["curso_asignado"]
-            profesor.save()
+            form.save()
             return redirect('myapp:profesores')
     else:
-        form = ProfesorForm(initial={
-            'nombre': profesor.nombre,
-            'apellido': profesor.apellido,
-            'email': profesor.email,
-            'profesion': profesor.profesion,
-            'curso_asignado': profesor.curso_asignado,
-        })
-    return render(request, 'myapp/profesor_formulario.html', {'form': form})
+        form = ProfesorForm(instance=profesor)
+    return render(request, 'myapp/profesor_form.html', {'form': form})
 
 @solo_admin
 def eliminar_profesor(request, pk):
@@ -243,7 +273,17 @@ def eliminar_profesor(request, pk):
 
 @profesor_o_admin
 def trabajos_practicos(request):
-    trabajos = TrabajoPractico.objects.all()
+    # Si el usuario es profesor, filtramos los TPs solo para su curso asignado
+    if request.user.is_authenticated and hasattr(request.user, 'perfil') and request.user.perfil.rol == 'profesor':
+        profesor = Profesor.objects.filter(email=request.user.email).first()
+        if profesor and profesor.curso_asignado:
+            trabajos = TrabajoPractico.objects.filter(curso=profesor.curso_asignado)
+        else:
+            trabajos = TrabajoPractico.objects.none()
+    else:
+        # Los administradores ven todos los trabajos prácticos
+        trabajos = TrabajoPractico.objects.all()
+        
     return render(request, 'myapp/trabajos_practicos.html', {'trabajos': trabajos})
 
 @profesor_o_admin
@@ -277,13 +317,14 @@ def eliminar_trabajo_practico(request, pk):
         return redirect('myapp:trabajos_practicos')
     return render(request, 'myapp/trabajo_practico_confirm_delete.html', {'trabajo': trabajo})
 
-@profesor_o_admin
+# Aplicamos el candado estricto para que solo el titular de la materia o el admin puedan ver las entregas y calificar
+@profesor_titular_o_admin
 def detalle_trabajo_practico(request, pk):
     trabajo = get_object_or_404(TrabajoPractico, pk=pk)
     entregas = trabajo.entregas.all()
     return render(request, 'myapp/trabajo_practico_detail.html', {'trabajo': trabajo, 'entregas': entregas})
 
-@profesor_o_admin
+@profesor_titular_o_admin
 def calificar_entrega(request, pk):
     entrega = get_object_or_404(Entrega, pk=pk)
     if request.method == 'POST':
@@ -291,6 +332,7 @@ def calificar_entrega(request, pk):
         if nota_str:
             try:
                 entrega.nota = int(nota_str)
+                entrega.entregado = True
                 entrega.save()
                 return redirect('myapp:detalle_trabajo_practico', pk=entrega.trabajo_practico.pk)
             except ValueError:
@@ -304,10 +346,8 @@ def calificar_entrega(request, pk):
 
 @login_required
 def panel_alumno(request):
-    # Buscamos si el usuario ya tiene un Estudiante asociado por email
     estudiante = Estudiante.objects.filter(email=request.user.email).first()
     
-    # Si se registró por cuentas y no tiene ficha de Estudiante, se la creamos sin campos que no existan
     if not estudiante:
         estudiante = Estudiante.objects.create(
             nombre=request.user.username,
@@ -329,15 +369,12 @@ def panel_alumno(request):
 def ingresar_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id)
     
-    # Si es profesor o admin, entran directo sin clave
     if hasattr(request.user, 'perfil') and request.user.perfil.rol in ['admin', 'profesor']:
         return redirect('myapp:detalle_curso', curso_id=curso.id)
         
-    # Si el curso no tiene contraseña, entra directo
     if not curso.password_curso:
         return redirect('myapp:detalle_curso', curso_id=curso.id)
         
-    # Verificamos si ya guardó la autorización en la sesión del navegador
     cursos_autorizados = request.session.get('cursos_autorizados', [])
     if curso.id in cursos_autorizados:
         return redirect('myapp:detalle_curso', curso_id=curso.id)
@@ -346,7 +383,6 @@ def ingresar_curso(request, curso_id):
     if request.method == 'POST':
         clave_ingresada = request.POST.get('password')
         if clave_ingresada == curso.password_curso:
-            # Guardamos en la sesión que este usuario ya está autorizado para este curso
             if curso.id not in cursos_autorizados:
                 cursos_autorizados.append(curso.id)
                 request.session['cursos_autorizados'] = cursos_autorizados

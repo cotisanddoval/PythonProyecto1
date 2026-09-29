@@ -86,18 +86,33 @@ Cursos - Instituto Tecnológico Saint-Exupéry
                         
                         <!-- Botones dinámicos según el rol del usuario -->
                         <div>
-                            {% if user.is_authenticated and user.perfil.rol == 'admin' %}
-                                <!-- Grupo de botones de edición/eliminación para Administradores -->
-                                <div class="btn-group shadow-sm" role="group">
-                                    <a href="{% url 'myapp:editar_curso' curso.pk %}" class="btn btn-sm btn-outline-dark rounded-start-pill px-3" title="Editar">
-                                        <i class="bi bi-pencil-square"></i> Editar
+                            {% if user.is_authenticated %}
+                                {% if user.perfil.rol == 'admin' %}
+                                    <div class="d-flex flex-column gap-1">
+                                        <div class="btn-group shadow-sm" role="group">
+                                            <a href="{% url 'myapp:editar_curso' curso.pk %}" class="btn btn-sm btn-outline-dark rounded-start-pill px-2" title="Editar">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            <a href="{% url 'myapp:eliminar_curso' curso.pk %}" class="btn btn-sm btn-outline-danger rounded-end-pill px-2" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                        <a href="{% url 'myapp:detalle_curso' curso.pk %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm text-center" style="background-color: #631925;">
+                                            <i class="bi bi-eye me-1"></i> Ver Curso
+                                        </a>
+                                    </div>
+                                {% elif user.perfil.rol == 'profesor' %}
+                                    <!-- Botón directo para profesores: ven el contenido sin contraseñas -->
+                                    <a href="{% url 'myapp:detalle_curso' curso.pk %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" style="background-color: #631925;">
+                                        <i class="bi bi-eye me-1"></i> Ver Contenido / TPs
                                     </a>
-                                    <a href="{% url 'myapp:eliminar_curso' curso.pk %}" class="btn btn-sm btn-outline-danger rounded-end-pill px-3" title="Eliminar">
-                                        <i class="bi bi-trash"></i>
+                                {% else %}
+                                    <!-- Botón para alumnos: exige contraseña de inscripción -->
+                                    <a href="{% url 'myapp:ingresar_curso' curso.id %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" style="background-color: #631925;">
+                                        <i class="bi bi-journal-check me-1"></i> Cursar / Ver TPs
                                     </a>
-                                </div>
+                                {% endif %}
                             {% else %}
-                                <!-- Botón dinámico que redirige a la validación de contraseña del curso -->
                                 <a href="{% url 'myapp:ingresar_curso' curso.id %}" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" style="background-color: #631925;">
                                     <i class="bi bi-journal-check me-1"></i> Cursar / Ver TPs
                                 </a>
