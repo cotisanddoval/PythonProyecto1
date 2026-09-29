@@ -137,3 +137,6 @@ MEDIA_URL = '/media/'
 #Ruta de la carpeta donde se guardaran los archivos multimedia
 
 MEDIA_ROOT = BASE_DIR / 'media'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'

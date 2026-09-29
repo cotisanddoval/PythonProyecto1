@@ -3,59 +3,72 @@
 {% block title %}Trabajos Prácticos - Sistema Académico{% endblock %}
 
 {% block content %}
-<!-- Encabezado con título y subtítulo -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-0" style="color: #631925;">Trabajos Prácticos</h2>
-        <p class="text-muted mt-1 mb-0">Gestiona las consignas y revisa las entregas de tus alumnos.</p>
-    </div>
-    <a href="{% url 'myapp:crear_trabajo_practico' %}" class="btn text-white rounded-pill px-4 shadow-sm" style="background-color: #631925;">
-        <i class="bi bi-plus-lg me-2"></i>Nuevo Trabajo
-    </a>
-</div>
+<div class="container py-4">
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for trabajo in trabajos %}
-    <div class="col">
-        <!-- Enlace apuntando al detalle de entregas -->
-        <a href="{% url 'myapp:detalle_trabajo_practico' trabajo.pk %}" class="text-decoration-none">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card" style="transition: transform 0.2s, box-shadow 0.2s;">
-                <div class="card-header border-0 pt-4 pb-2 bg-white text-center">
-                    <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: #fff1f0; color: #631925;">
-                        <i class="bi bi-journal-bookmark fs-2"></i>
-                    </div>
-                    <h5 class="card-title fw-bold text-dark mb-1">{{ trabajo.titulo }}</h5>
-                    <span class="badge rounded-pill" style="background-color: #dfd790; color: #4a4a4a;">
-                        {{ trabajo.curso.nombre }}
-                    </span>
-                </div>
-                <div class="card-body px-4 pb-4">
-                    <p class="card-text text-muted small mb-3">
-                        {{ trabajo.descripcion|truncatechars:100|default:"Sin descripción." }}
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-auto">
-                        <small class="text-muted">
-                            <i class="bi bi-calendar-event me-1"></i>Vence: {{ trabajo.fecha_entrega|date:"d M Y" }}
-                        </small>
-                        <span class="text-primary small fw-semibold" style="color: #631925 !important;">
-                            Ver entregas <i class="bi bi-arrow-right"></i>
+    <!-- Encabezado dinámico: el botón superior solo aparece si ya hay trabajos creados -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h2 fw-bold mb-1" style="color: #4a121a;">Trabajos Prácticos</h1>
+            <p class="text-muted mb-0">Gestiona las consignas y revisa las entregas de tus alumnos.</p>
+        </div>
+        {% if user.is_authenticated and user.perfil.rol in 'admin,profesor' and trabajos %}
+        <a href="{% url 'myapp:crear_trabajo_practico' %}" class="btn text-white px-4 py-2 rounded-pill shadow-sm" style="background-color: #631925; border: none;">
+            <i class="bi bi-plus-circle me-1"></i> Nuevo Trabajo
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Grilla de Trabajos -->
+    <div class="row row-cols-1 g-4">
+        {% for trabajo in trabajos %}
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white card-hover" style="transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <span class="badge mb-2 px-3 py-1 rounded-pill" style="background-color: #631925; color: #dfd790;">
+                            {{ trabajo.curso.nombre }} (Camada {{ trabajo.curso.camada }})
                         </span>
+                        <h4 class="fw-bold mb-1" style="color: #2b1116;">{{ trabajo.titulo }}</h4>
+                        <p class="text-muted small mb-2">{{ trabajo.descripcion|default:"Sin descripción detallada." }}</p>
+                        <span class="badge bg-light text-secondary border px-3 py-1 rounded-pill">
+                            <i class="bi bi-calendar-x me-1"></i> Vence: {{ trabajo.fecha_entrega|date:"d M Y" }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <a href="{% url 'myapp:detalle_trabajo_practico' trabajo.pk %}" class="btn text-white rounded-pill px-4 shadow-sm fw-semibold" style="background-color: #631925;">
+                            <i class="bi bi-journal-check me-1"></i> Ver entregas <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
+        {% empty %}
+        <!-- Estado vacío elegante con la opción exclusiva para crear el primer trabajo -->
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm mx-auto border-0" style="max-width: 500px;">
+                <div class="d-inline-flex p-3 rounded-circle mb-3" style="background-color: rgba(99, 25, 37, 0.08);">
+                    <i class="bi bi-journal-bookmark fs-1" style="color: #631925;"></i>
+                </div>
+                <h4 class="fw-bold mb-2" style="color: #2b1116;">No hay trabajos prácticos</h4>
+                <p class="text-muted small mb-4">Aún no se han asignado consignas para esta materia o camada.</p>
+                
+                {% if user.is_authenticated and user.perfil.rol in 'admin,profesor' %}
+                <a href="{% url 'myapp:crear_trabajo_practico' %}" class="btn text-white px-4 py-2 rounded-pill shadow-sm fw-semibold" style="background-color: #631925;">
+                    <i class="bi bi-plus-circle me-1"></i> Crear primer trabajo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="col-12 text-center py-5">
-        <p class="text-muted fs-5">No hay trabajos prácticos asignados aún.</p>
-    </div>
-    {% endfor %}
+
 </div>
 
 <style>
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    .card-hover:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(43, 17, 22, 0.08) !important;
     }
 </style>
 {% endblock %}
