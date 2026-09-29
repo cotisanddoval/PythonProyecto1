@@ -134,3 +134,27 @@ def cursoFormulario(request):
         form = CursoFormulario()
        
     return render(request, 'myapp/curso_formulario.html', {'form': form})
+
+# Editar Curso
+def editar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        # Es indispensable request.FILES para que se guarde la imagen si la cambian
+        form = CursoFormulario(request.POST, request.FILES, instance=curso)
+        if form.is_valid():
+            form.save()
+            return redirect('myapp:cursos')
+    else:
+        # Pre-poblamos el formulario con los datos existentes
+        form = CursoFormulario(instance=curso)
+        
+    # Reutilizamos tu plantilla actual de agregar curso
+    return render(request, 'myapp/curso_formulario.html', {'form': form})
+
+# Eliminar Curso
+def eliminar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        curso.delete()
+        return redirect('myapp:cursos')
+    return render(request, 'myapp/curso_confirm_delete.html', {'curso': curso})

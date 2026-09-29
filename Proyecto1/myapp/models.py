@@ -14,6 +14,10 @@ class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     camada = models.IntegerField()
     imagen = models.ImageField(upload_to='cursos/', null=True, blank=True)
+    
+    # Nuevos campos para manejar el estado y la fecha:
+    activo = models.BooleanField(default=True, verbose_name="¿Curso Activo?")
+    fecha_fin = models.DateField(null=True, blank=True, verbose_name="Fecha de Finalización")
 
     def __str__(self):
         return f"{self.nombre} (Camada {self.camada})"

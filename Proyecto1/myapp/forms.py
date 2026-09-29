@@ -9,7 +9,10 @@ class EstudianteForm(forms.ModelForm):
 class CursoFormulario(forms.ModelForm):
     class Meta:
         model = Curso
-        fields = ['nombre', 'camada', 'imagen']
+        fields = ['nombre', 'camada', 'imagen', 'activo', 'fecha_fin']
+        widgets = {
+            'fecha_fin': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
 class ProfesorForm(forms.ModelForm):
     class Meta:
