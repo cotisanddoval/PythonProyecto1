@@ -283,12 +283,10 @@ def calificar_entrega(request, pk):
         nota_str = request.POST.get('nota')
         if nota_str:
             try:
-                # Intentamos convertir la nota a número entero (o float si usas decimales)
                 entrega.nota = int(nota_str)
                 entrega.save()
                 return redirect('myapp:detalle_trabajo_practico', pk=entrega.trabajo_practico.pk)
             except ValueError:
-                # Si el usuario ingresa algo inválido, puedes manejarlo o mostrar un error
                 form_error = "Por favor, ingresa un número válido para la nota."
                 return render(request, 'myapp/calificar_entrega.html', {'entrega': entrega, 'error': form_error})
                 
@@ -299,15 +297,20 @@ def calificar_entrega(request, pk):
 
 @login_required
 def panel_alumno(request):
+    # Buscamos si el usuario ya tiene un Estudiante asociado por email
     estudiante = Estudiante.objects.filter(email=request.user.email).first()
     
-    if estudiante:
-        entregas = Entrega.objects.filter(estudiante=estudiante)
-        cursos_ids = entregas.values_list('trabajo_practico__curso', flat=True).distinct()
-        cursos = Curso.objects.filter(id__in=cursos_ids)
-    else:
-        entregas = []
-        cursos = []
+    # Si se registró por cuentas y no tiene ficha de Estudiante, se la creamos sin campos que no existan
+    if not estudiante:
+        estudiante = Estudiante.objects.create(
+            nombre=request.user.username,
+            apellido="",
+            email=request.user.email
+        )
+    
+    entregas = Entrega.objects.filter(estudiante=estudiante)
+    cursos_ids = entregas.values_list('trabajo_practico__curso', flat=True).distinct()
+    cursos = Curso.objects.filter(id__in=cursos_ids)
 
     return render(request, 'myapp/estudiante_detail.html', {
         'estudiante': estudiante,

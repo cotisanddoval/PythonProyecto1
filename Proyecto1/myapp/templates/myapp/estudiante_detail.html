@@ -33,9 +33,11 @@ Detalle de {{ estudiante.nombre }} - Sistema Académico
                     <p class="text-muted mb-4"><i class="bi bi-envelope me-1"></i> {{ estudiante.email }}</p>
                     
                     <div class="d-grid gap-2">
-                        <a href="{% url 'myapp:editar_estudiante' estudiante.pk %}" class="btn btn-outline-dark rounded-pill">
-                            <i class="bi bi-pencil-square me-1"></i> Editar Perfil
-                        </a>
+                        {% if estudiante and estudiante.pk %}
+                            <a href="{% url 'myapp:editar_estudiante' estudiante.pk %}" class="btn btn-outline-dark rounded-pill">
+                                <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
