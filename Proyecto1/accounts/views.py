@@ -9,13 +9,8 @@ def registro(request):
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
             user = form.save()
-            
-            # Capturamos el rol que el usuario eligió en el formulario
-            rol_elegido = form.cleaned_data.get('rol')
-            
-            # Creamos el perfil asignándole ese rol
-            Perfil.objects.create(user=user, rol=rol_elegido)
-            
+            # Usamos get_or_create para evitar el error de duplicidad si el perfil ya existe
+            Perfil.objects.get_or_create(user=user)
             login(request, user)
             return redirect('myapp:index')
     else:
