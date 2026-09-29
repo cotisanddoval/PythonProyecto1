@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if form.instance.pk %}Editar Estudiante{% else %}Agregar Estudiante{% endif %} - Sistema Académico
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-5">
+        
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            
+            <!-- Encabezado -->
+            <div class="p-4 text-center" style="background-color: #631925;">
+                <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: rgba(255, 255, 255, 0.12);">
+                    <i class="bi bi-person-vcard fs-2" style="color: #dfd790 !important;"></i>
+                </div>
+                <h3 class="fw-bold mb-1" style="color: #dfd790 !important;">
+                    {% if form.instance.pk %}Editar Estudiante{% else %}Agregar Estudiante{% endif %}
+                </h3>
+                <p class="small mb-0" style="color: rgba(255, 255, 255, 0.8) !important;">
+                    {% if form.instance.pk %}Modifica los datos del alumno seleccionado{% else %}Ingresa los datos del nuevo matriculado{% endif %}
+                </p>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="card-body bg-white p-4 p-md-5">
+                <!-- Nota: Según tu views.py, la vista de creación se llama crear_estudiante -->
+                <form action="{% if form.instance.pk %}{% url 'myapp:editar_estudiante' form.instance.pk %}{% else %}{% url 'myapp:crear_estudiante' %}{% endif %}" method="post" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small rounded-3">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-3">
+                        <!-- Nombre -->
+                        <div class="col-md-6">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">Nombre</label>
+                            <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" value="{{ form.nombre.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
+                            {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                        </div>
+                        
+                        <!-- Apellido -->
+                        <div class="col-md-6">
+                            <label for="{{ form.apellido.id_for_label }}" class="form-label fw-semibold small text-secondary">Apellido</label>
+                            <input type="text" name="{{ form.apellido.name }}" id="{{ form.apellido.id_for_label }}" value="{{ form.apellido.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
+                            {% if form.apellido.errors %}<div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold small text-secondary">Correo Electrónico</label>
+                        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" placeholder="ejemplo@correo.com" required>
+                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn text-white rounded-pill fw-semibold shadow-sm" style="background-color: #631925; border: none;">
+                            Guardar Estudiante
+                        </button>
+                        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">
+                            Cancelar y volver
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-input:focus {
+        border-color: #631925 !important;
+        box-shadow: 0 0 0 0.25rem rgba(99, 25, 37, 0.15) !important;
+    }
+</style>
+{% endblock %}

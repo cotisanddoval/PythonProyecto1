@@ -26,5 +26,9 @@ urlpatterns = [
     path('profesores/eliminar/<int:pk>/', views.eliminar_profesor, name='eliminar_profesor'),
     
     # Entregables
+    
     path('entregables/', views.entregables, name='entregables'),
+    path('entregables/crear/', views.crear_entregable, name='crear_entregable'),
+    path('entregables/editar/<int:pk>/', views.editar_entregable, name='editar_entregable'),
+    path('entregables/eliminar/<int:pk>/', views.eliminar_entregable, name='eliminar_entregable'),
 ]

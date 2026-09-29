@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalle de {{ estudiante.nombre }} - Sistema Académico
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Encabezado con botón de volver -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 fw-bold mb-1" style="color: #4a121a;">Perfil del Estudiante</h1>
+            <p class="text-muted mb-0">Resumen académico y entregables.</p>
+        </div>
+        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-light rounded-pill px-4 shadow-sm text-muted fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Volver a la lista
+        </a>
+    </div>
+
+    <div class="row g-4">
+        
+        <!-- Columna Izquierda: Tarjeta de Perfil -->
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white text-center h-100">
+                <div class="p-4" style="background-color: #631925;">
+                    <div class="d-inline-flex p-4 rounded-circle mb-2 shadow-sm" style="background-color: #fdfdfd;">
+                        <i class="bi bi-person-fill" style="font-size: 3rem; color: #a3704c;"></i>
+                    </div>
+                </div>
+                <div class="card-body p-4 pt-3">
+                    <h4 class="fw-bold mb-1" style="color: #2b1116;">{{ estudiante.nombre }} {{ estudiante.apellido }}</h4>
+                    <p class="text-muted mb-4"><i class="bi bi-envelope me-1"></i> {{ estudiante.email }}</p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'myapp:editar_estudiante' estudiante.pk %}" class="btn btn-outline-dark rounded-pill">
+                            <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Información Académica -->
+        <div class="col-12 col-lg-8">
+            
+            <!-- Sección 1: Cursos Asignados -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 bg-white">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold" style="color: #631925;"><i class="bi bi-book me-2"></i>Cursos Inscritos</h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Asumimos que un estudiante tiene una relación ManyToMany con Curso -->
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for curso in estudiante.cursos.all %}
+                            <span class="badge rounded-pill border px-3 py-2 text-dark" style="background-color: #f8f9fa; font-size: 0.85rem;">
+                                {{ curso.nombre }} (Camada #{{ curso.camada }})
+                            </span>
+                        {% empty %}
+                            <p class="text-muted small mb-0">El estudiante no está inscrito en ningún curso actualmente.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Entregables y Calificaciones -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0" style="color: #631925;"><i class="bi bi-folder2-open me-2"></i>Estado de Entregables</h5>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead style="background-color: #f8f9fa;">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0">Actividad</th>
+                                <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0 text-center">Estado</th>
+                                <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0 text-center">Calificación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Asumimos que pasas 'entregables' desde la vista o usas estudiante.entregable_set.all -->
+                            {% for entregable in estudiante.entregables.all %}
+                            <tr>
+                                <td class="px-4 py-3 border-light">
+                                    <span class="fw-semibold text-dark d-block">{{ entregable.titulo }}</span>
+                                    <span class="text-muted small">{{ entregable.curso.nombre }}</span>
+                                </td>
+                                
+                                <td class="px-4 py-3 text-center border-light">
+                                    <!-- Lógica visual de estados -->
+                                    {% if entregable.estado == 'evaluado' %}
+                                        <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 py-1 border border-success border-opacity-25">
+                                            Evaluado
+                                        </span>
+                                    {% elif entregable.estado == 'sin_nota' %}
+                                        <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 py-1 border border-warning border-opacity-25">
+                                            Entregado (Sin nota)
+                                        </span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 py-1 border border-danger border-opacity-25">
+                                            No entregado
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                
+                                <td class="px-4 py-3 text-center border-light">
+                                    {% if entregable.nota %}
+                                        <span class="fw-bold" style="color: #4a121a; font-size: 1.1rem;">{{ entregable.nota }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 border-light text-muted small">
+                                    No hay entregables registrados para este alumno.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

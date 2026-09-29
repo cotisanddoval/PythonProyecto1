@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Estudiante, Profesor, Curso, Entregable
-from .forms import CursoFormulario, ProfesorForm, EstudianteForm
+from .forms import CursoFormulario, ProfesorForm, EstudianteForm, EntregableForm
 
 def index(request):
     return render(request, 'myapp/index.html')
@@ -9,7 +9,7 @@ def index(request):
 
 def estudiantes(request):
     estudiantes = Estudiante.objects.all()
-    return render(request, 'myapp/estudiantes_list.html', {'estudiantes': estudiantes})
+    return render(request, 'myapp/estudiantes.html', {'estudiantes': estudiantes})
 
 def detalle_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
@@ -51,17 +51,15 @@ def cursos(request):
     return render(request, 'myapp/cursos.html', {'cursos': cursos})
 
 def cursoFormulario(request):
-    if request.method == "POST":
-        form = CursoFormulario(request.POST)
+    if request.method == 'POST':
+        form = CursoFormulario(request.POST, request.FILES)  # request.FILES es indispensable
         if form.is_valid():
-            Curso.objects.create(
-                nombre=form.cleaned_data["nombre"],
-                camada=form.cleaned_data["camada"]
-            )
-            return render(request, "myapp/curso_exito.html")
+            form.save()
+            return redirect('myapp:cursos')
     else:
         form = CursoFormulario()
-    return render(request, "myapp/curso_formulario.html", {"form": form})
+       
+    return render(request, 'myapp/curso_formulario.html', {'form': form})
 
 
 # --- PROFESORES ---
@@ -124,31 +122,47 @@ def entregables(request):
     entregables = Entregable.objects.all()
     return render(request, 'myapp/entregables.html', {'entregables': entregables})
 
-def cursoFormulario(request):
+# --- ENTREGABLES (CRUD) ---
+
+def crear_entregable(request):
     if request.method == 'POST':
-        form = CursoFormulario(request.POST, request.FILES)  # request.FILES es indispensable
+        form = EntregableForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('myapp:cursos')
+            return redirect('myapp:entregables')
     else:
-        form = CursoFormulario()
-       
-    return render(request, 'myapp/curso_formulario.html', {'form': form})
+        form = EntregableForm()
+    return render(request, 'myapp/entregable_form.html', {'form': form})
+
+def editar_entregable(request, pk):
+    entregable = get_object_or_404(Entregable, pk=pk)
+    if request.method == 'POST':
+        form = EntregableForm(request.POST, instance=entregable)
+        if form.is_valid():
+            form.save()
+            return redirect('myapp:entregables')
+    else:
+        form = EntregableForm(instance=entregable)
+    return render(request, 'myapp/entregable_form.html', {'form': form})
+
+def eliminar_entregable(request, pk):
+    entregable = get_object_or_404(Entregable, pk=pk)
+    if request.method == 'POST':
+        entregable.delete()
+        return redirect('myapp:entregables')
+    return render(request, 'myapp/entregable_confirm_delete.html', {'entregable': entregable})
 
 # Editar Curso
 def editar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
     if request.method == 'POST':
-        # Es indispensable request.FILES para que se guarde la imagen si la cambian
         form = CursoFormulario(request.POST, request.FILES, instance=curso)
         if form.is_valid():
             form.save()
             return redirect('myapp:cursos')
     else:
-        # Pre-poblamos el formulario con los datos existentes
         form = CursoFormulario(instance=curso)
-        
-    # Reutilizamos tu plantilla actual de agregar curso
+    
     return render(request, 'myapp/curso_formulario.html', {'form': form})
 
 # Eliminar Curso

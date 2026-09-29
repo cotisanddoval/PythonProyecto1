@@ -1,11 +1,112 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Inicio
+Entregables - Sistema Académico
 {% endblock %}
 
 {% block content %}
+<div class="container py-4">
 
-<h1>Bienvenido</h1>
+    <!-- Encabezado con botón de acción -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h1 class="h2 fw-bold mb-1" style="color: #4a121a;">Gestión de Entregables</h1>
+            <p class="text-muted mb-0">Administra los trabajos asignados y las calificaciones de los alumnos.</p>
+        </div>
+        <a href="{% url 'myapp:crear_entregable' %}" class="btn text-white px-4 py-2 rounded-pill shadow-sm" style="background-color: #631925; border: none;">
+            <i class="bi bi-file-earmark-plus me-1"></i> + Asignar Trabajo
+        </a>
+    </div>
 
+    <!-- Tabla estilizada de Entregables -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background-color: #f8f9fa;">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0">Trabajo</th>
+                        <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0">Estudiante</th>
+                        <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0 text-center">Fecha de Inicio</th>
+                        <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0 text-center">Estado y Nota</th>
+                        <th scope="col" class="px-4 py-3 text-secondary fw-semibold small border-bottom-0 text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entregable in entregables %}
+                    <tr>
+                        <!-- Datos del trabajo -->
+                        <td class="px-4 py-3 border-light">
+                            <span class="fw-bold text-dark d-block">{{ entregable.nombre }}</span>
+                            <span class="text-muted small">ID: #{{ entregable.pk }}</span>
+                        </td>
+                        
+                        <!-- Estudiante -->
+                        <td class="px-4 py-3 border-light">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center me-2 text-secondary shadow-sm" style="width: 35px; height: 35px; background-color: #fdfdfd;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <span class="fw-semibold text-dark">{{ entregable.estudiante.nombre }} {{ entregable.estudiante.apellido }}</span>
+                            </div>
+                        </td>
+                        
+                        <!-- Fecha de Inicio -->
+                        <td class="px-4 py-3 text-center border-light text-muted small">
+                            <i class="bi bi-calendar-event me-1"></i> {{ entregable.fecha_inicio|date:"d/m/Y" }}
+                        </td>
+                        
+                        <!-- Lógica de Estado y Calificación -->
+                        <td class="px-4 py-3 text-center border-light">
+                            <div class="d-flex flex-column align-items-center gap-1">
+                                {% if entregable.entregado and entregable.nota %}
+                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success px-3 border border-success border-opacity-25">
+                                        Evaluado
+                                    </span>
+                                    <span class="fw-bold mt-1" style="color: #4a121a; font-size: 0.95rem;">Nota: {{ entregable.nota }}</span>
+                                
+                                {% elif entregable.entregado %}
+                                    <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning px-3 border border-warning border-opacity-25">
+                                        Entregado
+                                    </span>
+                                    <span class="small text-muted mt-1">Sin corregir</span>
+                                
+                                {% else %}
+                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger px-3 border border-danger border-opacity-25">
+                                        No Entregado
+                                    </span>
+                                    <span class="small text-muted mt-1">-</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <!-- Acciones (Editar/Calificar y Eliminar) -->
+                        <td class="px-4 py-3 text-end border-light">
+                            <div class="btn-group shadow-sm" role="group">
+                                <a href="{% url 'myapp:editar_entregable' entregable.pk %}" class="btn btn-sm btn-outline-dark rounded-start-pill px-3" title="Calificar / Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="{% url 'myapp:eliminar_entregable' entregable.pk %}" class="btn btn-sm btn-outline-danger rounded-end-pill px-3" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <!-- Pantalla vacía si no hay entregables -->
+                    <tr>
+                        <td colspan="5" class="text-center py-5 border-light">
+                            <div class="p-4 mx-auto">
+                                <i class="bi bi-journal-x text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+                                <h5 class="fw-bold" style="color: #631925;">No hay trabajos asignados</h5>
+                                <p class="text-muted small">Crea el primer entregable para que los alumnos puedan subir sus trabajos.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
 {% endblock %}

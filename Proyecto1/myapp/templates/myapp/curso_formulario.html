@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Agregar Curso - Sistema Académico
+{% if form.instance.pk %}Editar Curso{% else %}Agregar Curso{% endif %} - Sistema Académico
 {% endblock %}
 
 {% block content %}
@@ -9,18 +9,21 @@ Agregar Curso - Sistema Académico
     <div class="col-12 col-md-8 col-lg-5">
         
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            
             <div class="p-4 text-center" style="background-color: #631925;">
                 <div class="d-inline-flex p-3 rounded-circle mb-2" style="background-color: rgba(255, 255, 255, 0.12);">
-                    <i class="bi bi-journal-plus fs-2" style="color: #dfd790;"></i>
+                    <i class="bi bi-journal-plus fs-2" style="color: #dfd790 !important;"></i>
                 </div>
-                <!-- Título con el color dorado #dfd790 forzado -->
-                <h3 class="fw-bold mb-1" style="color: #dfd790 !important;">Agregar Curso</h3>
-                <p class="small mb-0" style="color: rgba(255, 255, 255, 0.8) !important;">Completa los datos y la portada de la materia</p>
+                <h3 class="fw-bold mb-1" style="color: #dfd790 !important;">
+                    {% if form.instance.pk %}Editar Curso{% else %}Agregar Curso{% endif %}
+                </h3>
+                <p class="small mb-0" style="color: rgba(255, 255, 255, 0.8) !important;">
+                    {% if form.instance.pk %}Modifica los datos del curso seleccionado{% else %}Completa los datos y la portada de la materia{% endif %}
+                </p>
             </div>
 
-            <div class="card-body p-3 p-md-4">
-                <!-- enctype="multipart/form-data" es fundamental para enviar imágenes -->
-                <form action="{% url 'myapp:cursoFormulario' %}" method="post" enctype="multipart/form-data" novalidate>
+            <div class="card-body bg-white p-4 p-md-5">
+                <form action="{% if form.instance.pk %}{% url 'myapp:editar_curso' form.instance.pk %}{% else %}{% url 'myapp:cursoFormulario' %}{% endif %}" method="post" enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
 
                     {% if form.non_field_errors %}
@@ -31,60 +34,43 @@ Agregar Curso - Sistema Académico
 
                     <!-- Nombre -->
                     <div class="mb-3">
-                        <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">
-                            Nombre del Curso
-                        </label>
-                        <input type="text" 
-                               name="{{ form.nombre.name }}" 
-                               id="{{ form.nombre.id_for_label }}" 
-                               value="{{ form.nombre.value|default_if_none:'' }}"
-                               placeholder="Ej: Programación Web"
-                               class="form-control form-control rounded-3 fs-6 custom-input"
-                               required>
-                        {% if form.nombre.errors %}
-                            <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
-                        {% endif %}
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold small text-secondary">Nombre del Curso</label>
+                        <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}" value="{{ form.nombre.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
                     </div>
 
                     <!-- Camada -->
                     <div class="mb-3">
-                        <label for="{{ form.camada.id_for_label }}" class="form-label fw-semibold small text-secondary">
-                            Número de Camada / Comisión
-                        </label>
-                        <input type="number" 
-                               name="{{ form.camada.name }}" 
-                               id="{{ form.camada.id_for_label }}" 
-                               value="{{ form.camada.value|default_if_none:'' }}"
-                               placeholder="Ej: 1"
-                               class="form-control form-control-lg rounded-3 fs-6 custom-input"
-                               required>
-                        {% if form.camada.errors %}
-                            <div class="text-danger small mt-1">{{ form.camada.errors.0 }}</div>
-                        {% endif %}
+                        <label for="{{ form.camada.id_for_label }}" class="form-label fw-semibold small text-secondary">Número de Camada / Comisión</label>
+                        <input type="number" name="{{ form.camada.name }}" id="{{ form.camada.id_for_label }}" value="{{ form.camada.value|default_if_none:'' }}" class="form-control rounded-3 fs-6 custom-input" required>
                     </div>
 
                     <!-- Foto de portada -->
-                    <div class="mb-4">
-                        <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold small text-secondary">
-                            Foto de Portada (Opcional)
-                        </label>
-                        <input type="file" 
-                               name="{{ form.imagen.name }}" 
-                               id="{{ form.imagen.id_for_label }}" 
-                               accept="image/*"
-                               class="form-control rounded-3 fs-6 custom-input">
-                        {% if form.imagen.errors %}
-                            <div class="text-danger small mt-1">{{ form.imagen.errors.0 }}</div>
-                        {% endif %}
+                    <div class="mb-3">
+                        <label for="{{ form.imagen.id_for_label }}" class="form-label fw-semibold small text-secondary">Foto de Portada (Opcional)</label>
+                        <input type="file" name="{{ form.imagen.name }}" id="{{ form.imagen.id_for_label }}" accept="image/*" class="form-control rounded-3 fs-6 custom-input">
+                    </div>
+
+                    <!-- Activo -->
+                    <div class="mb-3 form-check form-switch ps-5">
+                        {{ form.activo }}
+                        <label class="form-check-label fw-semibold small text-secondary" for="{{ form.activo.id_for_label }}">Curso activo (visible para inscripciones)</label>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label fw-semibold small text-secondary">Fecha de Inicio</label>
+                            {{ form.fecha_inicio }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.fecha_fin.id_for_label }}" class="form-label fw-semibold small text-secondary">Fecha de Finalización</label>
+                            {{ form.fecha_fin }}
+                        </div>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn text-white rounded-pill fw-semibold shadow-sm" style="background-color: #631925; border: none;">
-                            Guardar Curso
-                        </button>
-                        <a href="{% url 'myapp:cursos' %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">
-                            Volver al catálogo
-                        </a>
+                        <button type="submit" class="btn text-white rounded-pill fw-semibold shadow-sm" style="background-color: #631925; border: none;">Guardar Curso</button>
+                        <a href="{% url 'myapp:cursos' %}" class="btn btn-light btn-sm rounded-pill text-muted mt-1">Volver al catálogo</a>
                     </div>
                 </form>
             </div>
@@ -97,6 +83,10 @@ Agregar Curso - Sistema Académico
     .custom-input:focus {
         border-color: #631925 !important;
         box-shadow: 0 0 0 0.25rem rgba(99, 25, 37, 0.15) !important;
+    }
+    .form-check-input:checked {
+        background-color: #631925;
+        border-color: #631925;
     }
 </style>
 {% endblock %}

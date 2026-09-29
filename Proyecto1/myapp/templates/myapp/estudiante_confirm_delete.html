@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Eliminar Estudiante - Sistema Académico
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5 py-3">
+    <div class="col-12 col-md-8 col-lg-5">
+        
+        <div class="card border-0 shadow rounded-4 overflow-hidden bg-white text-center">
+            
+            <div class="card-body p-4 p-md-5">
+                
+                <!-- Ícono -->
+                <div class="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-4" 
+                     style="width: 90px; height: 90px; background-color: #fff1f0; color: #dc3545;">
+                    <i class="bi bi-trash3 fs-1"></i>
+                </div>
+                
+                <h3 class="fw-bold mb-2" style="color: #2b1116;">¿Eliminar estudiante?</h3>
+                <p class="text-muted mb-4 small">
+                    Estás a punto de borrar permanentemente este registro. <br>
+                    <strong>Esta acción no se puede deshacer.</strong>
+                </p>
+                
+                <!-- Tarjeta interna de datos -->
+                <div class="py-3 px-2 mb-4 rounded-3" style="background-color: #f8f9fa;">
+                    <h5 class="fw-bold mb-2" style="color: #631925;">{{ estudiante.nombre }} {{ estudiante.apellido }}</h5>
+                    <span class="badge rounded-pill" style="background-color: #dfd790; color: #4a121a;">
+                        <i class="bi bi-envelope me-1"></i> {{ estudiante.email }}
+                    </span>
+                </div>
+
+                <!-- Botones -->
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-light rounded-pill px-4 py-2 text-muted fw-semibold w-100">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold w-100 shadow-sm">
+                            Sí, eliminar
+                        </button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
