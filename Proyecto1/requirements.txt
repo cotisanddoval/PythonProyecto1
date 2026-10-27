@@ -4,3 +4,4 @@ django-widget-tweaks==1.5.1
 pillow==12.3.0
 sqlparse==0.5.5
 tzdata==2026.2
+whitenoise==6.12.0
